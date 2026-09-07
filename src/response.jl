@@ -37,7 +37,6 @@ end
 
 struct HessenbergResolvent{FT}
     factorization::FT
-    dimension::Int
 end
 
 struct PortResponseCache{SRT,OWT,ERT,FWT,FDWT}
@@ -60,11 +59,11 @@ Create one with [`frequency_response`](@ref), then reuse it for
 steady state, port-response vectors, and shifted-resolvent backend are prepared
 once and reused by all subsequent observables.
 """
-struct FrequencyResponse{GT,BT,PT,OT,ST,HT,JT,RT,RDT,BET,CT}
+struct FrequencyResponse{GT,BT,PT,OPT,ST,HT,JT,RT,RDT,BET,CT}
     network::GT
     basis::BT
     parameter::PT
-    operators::OT
+    operators::OPT
     scattering::ST
     hamiltonian::HT
     jump_operators::JT
@@ -104,7 +103,11 @@ function _unwrap_response_number(x::Symbolics.Num)
 end
 
 function _unwrap_response_number(x)
-    throw(ArgumentError("response parameters must evaluate to numeric scalars; got $(typeof(x))"))
+    throw(
+        ArgumentError(
+            "response parameters must evaluate to numeric scalars; got $(typeof(x))",
+        ),
+    )
 end
 
 _response_parameter_value(x::Number, parameter) = x
@@ -176,7 +179,7 @@ end
 function _trace_vector(::Type{T}, d::Int) where {T}
     vecI = zeros(T, d * d)
     @inbounds for i = 1:d
-        vecI[i + (i - 1) * d] = one(T)
+        vecI[i+(i-1)*d] = one(T)
     end
     return vecI
 end
@@ -220,7 +223,7 @@ function _prepare_backend(
     end
 
     F = LinearAlgebra.hessenberg!(Lmat)
-    return HessenbergResolvent(F, d)
+    return HessenbergResolvent(F)
 end
 
 function _shifted_solve(R::HessenbergResolvent, μ::Number, rhs)
@@ -245,15 +248,10 @@ function _prepare_port_cache(S, J, ρmat)
     Jm = [_operator_matrix(Jk) for Jk in J]
 
     output_weights = hcat((_trace_weights(A) for A in Jm)...)
-
-    normal_rhs = Vector{Any}(undef, nports)
-    anomalous_rhs = Vector{Any}(undef, nports)
-    @inbounds for j = 1:nports
-        B = _input_coupling_matrix(S, Jm, j)
-        normal_rhs[j] = _commutator_vector(adjoint(B), ρmat)
-        anomalous_rhs[j] = -_commutator_vector(B, ρmat)
-    end
-    scattering_rhs = hcat(normal_rhs..., anomalous_rhs...)
+    input_couplings = [_input_coupling_matrix(S, Jm, j) for j = 1:nports]
+    normal_rhs = hcat((_commutator_vector(adjoint(B), ρmat) for B in input_couplings)...)
+    anomalous_rhs = hcat((-_commutator_vector(B, ρmat) for B in input_couplings)...)
+    scattering_rhs = hcat(normal_rhs, anomalous_rhs)
 
     δJ = [_fluctuation_matrix(A, ρmat) for A in Jm]
     emission_rhs = hcat((_left_product_vector(A, ρmat) for A in δJ)...)
@@ -354,11 +352,13 @@ function output_field(G::SLH, port::Integer; input = nothing)
     S = scattering(G)
     nports = size(S, 2)
     if input isa Number
-        nports == 1 || throw(ArgumentError("scalar `input` is only valid for a one-port network"))
+        nports == 1 ||
+            throw(ArgumentError("scalar `input` is only valid for a one-port network"))
         return S[port, 1] * input + L
     end
     input isa AbstractVector || throw(ArgumentError("`input` must be a scalar or vector"))
-    length(input) == nports || throw(DimensionMismatch("input amplitude vector has the wrong length"))
+    length(input) == nports ||
+        throw(DimensionMismatch("input amplitude vector has the wrong length"))
     offset = sum(S[port, j] * input[j] for j in axes(S, 2))
     return offset + L
 end
@@ -369,10 +369,12 @@ function output_field(R::FrequencyResponse, port::Integer; input = nothing)
     input === nothing && return L
     nports = length(R.jump_operators)
     if input isa Number
-        nports == 1 || throw(ArgumentError("scalar `input` is only valid for a one-port network"))
+        nports == 1 ||
+            throw(ArgumentError("scalar `input` is only valid for a one-port network"))
         offset = R.scattering[port, 1] * input
     else
-        input isa AbstractVector || throw(ArgumentError("`input` must be a scalar or vector"))
+        input isa AbstractVector ||
+            throw(ArgumentError("`input` must be a scalar or vector"))
         length(input) == nports ||
             throw(DimensionMismatch("input amplitude vector has the wrong length"))
         offset = sum(R.scattering[port, j] * input[j] for j in axes(R.scattering, 2))
@@ -384,7 +386,10 @@ end
 # Susceptibility
 # ──────────────────────────────────────────────
 
-function _numeric_response_operator(R::FrequencyResponse, A::QuantumOpticsBase.AbstractOperator)
+function _numeric_response_operator(
+    R::FrequencyResponse,
+    A::QuantumOpticsBase.AbstractOperator,
+)
     return A
 end
 
@@ -455,7 +460,7 @@ function _scattering_at(R::FrequencyResponse, ω::Real)
     X = _shifted_solve(R.backend, im * ω, R.cache.scattering_rhs)
     dynamic = transpose(R.cache.output_weights) * X
     normal = Matrix(R.scattering) + dynamic[:, 1:nports]
-    anomalous = dynamic[:, (nports + 1):(2 * nports)]
+    anomalous = dynamic[:, (nports+1):(2*nports)]
     return normal, anomalous
 end
 
@@ -555,13 +560,26 @@ function scattering_parameter(
     return [_scattering_parameter_at(R, ω, in_port, out, component) for ω in omega]
 end
 
-function scattering_parameter(G::SLH, basis, ρ_ss, omega; kwargs...)
-    response_kwargs = (; kwargs...)
-    in_port = get(response_kwargs, :in_port, 1)
-    out_port = get(response_kwargs, :out_port, nothing)
-    component = get(response_kwargs, :component, :normal)
-    preparation = Base.structdiff(response_kwargs, (; in_port = nothing, out_port = nothing, component = nothing))
-    R = frequency_response(G, basis, ρ_ss; preparation...)
+function scattering_parameter(
+    G::SLH,
+    basis,
+    ρ_ss,
+    omega;
+    parameter = Dict(),
+    operators = Dict(),
+    solver::AbstractResponseSolver = DenseHessenberg(),
+    in_port::Integer = 1,
+    out_port::Union{Nothing,Integer} = nothing,
+    component::Symbol = :normal,
+)
+    R = frequency_response(
+        G,
+        basis,
+        ρ_ss;
+        parameter = parameter,
+        operators = operators,
+        solver = solver,
+    )
     return scattering_parameter(
         R,
         omega;
@@ -612,13 +630,13 @@ function _quadrature_at(R::FrequencyResponse, ω::Real, port::Integer, angle::Re
     xplus = _shifted_solve(R.backend, im * ω, rhs)
     xminus = iszero(ω) ? xplus : _shifted_solve(R.backend, -im * ω, rhs)
 
-    CLL_plus = -_contract(wL, xplus)
-    CLL_minus = -_contract(wL, xminus)
-    CLdL_plus = -_contract(wLd, xplus)
-    CLdL_minus = -_contract(wLd, xminus)
+    corr_ll_plus = -_contract(wL, xplus)
+    corr_ll_minus = -_contract(wL, xminus)
+    corr_ldl_plus = -_contract(wLd, xplus)
+    corr_ldl_minus = -_contract(wLd, xminus)
 
     return 1 + 2 * real(
-        exp(-2im * angle) * (CLL_plus + CLL_minus) + CLdL_plus + CLdL_minus,
+        exp(-2im * angle) * (corr_ll_plus + corr_ll_minus) + corr_ldl_plus + corr_ldl_minus,
     )
 end
 
