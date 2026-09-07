@@ -230,12 +230,7 @@ using Test
 
         mismatched_basis = QuantumOpticsBase.GenericBasis(length(b))
         mismatched_ρ = QuantumOpticsBase.Operator(mismatched_basis, Matrix(ρ.data))
-        @test_throws ArgumentError frequency_response(
-            Glin,
-            b,
-            mismatched_ρ;
-            parameter = p,
-        )
+        @test_throws ArgumentError frequency_response(Glin, b, mismatched_ρ; parameter = p)
 
         a_num = to_numeric(a, b)
         mismatched_a = QuantumOpticsBase.Operator(mismatched_basis, Matrix(a_num.data))
