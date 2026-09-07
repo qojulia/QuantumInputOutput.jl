@@ -96,38 +96,47 @@ end
 # Parameter/scattering preparation
 # ──────────────────────────────────────────────
 
-_unwrap_response_number(x::Number) = x
+_response_parameter_value(
+    x::Number,
+    parameter,
+    ρ_ss::QuantumOpticsBase.AbstractOperator,
+)::ComplexF64 = ComplexF64(x)
 
-function _unwrap_response_number(x::Symbolics.Num)
-    return _unwrap_response_number(Symbolics.value(x))
+function _response_parameter_value(
+    x::Complex{Symbolics.Num},
+    parameter,
+    ρ_ss::QuantumOpticsBase.AbstractOperator,
+)::ComplexF64
+    return SQA.numeric_average(substitute(x, parameter), ρ_ss)
 end
 
-function _unwrap_response_number(x)
-    throw(
-        ArgumentError(
-            "response parameters must evaluate to numeric scalars; got $(typeof(x))",
-        ),
-    )
+function _response_parameter_value(
+    x::Symbolics.Num,
+    parameter,
+    ρ_ss::QuantumOpticsBase.AbstractOperator,
+)::ComplexF64
+    x_ = substitute(x, parameter)
+    return SQA.numeric_average(complex(x_, zero(x_)), ρ_ss)
 end
 
-_response_parameter_value(x::Number, parameter) = x
-
-function _response_parameter_value(x::Complex, parameter)
-    return complex(
-        _response_parameter_value(real(x), parameter),
-        _response_parameter_value(imag(x), parameter),
-    )
+function _response_parameter_value(
+    x::SQA.Coeff,
+    parameter,
+    ρ_ss::QuantumOpticsBase.AbstractOperator,
+)::ComplexF64
+    x_ = SQA.substitute(x, parameter)
+    return SQA.numeric_average(SQA.to_num(x_), ρ_ss)
 end
 
-function _response_parameter_value(x::Symbolics.Num, parameter)
-    return _unwrap_response_number(substitute(x, parameter))
+function _response_parameter_value(
+    x::BasicSymbolic,
+    parameter,
+    ρ_ss::QuantumOpticsBase.AbstractOperator,
+)::ComplexF64
+    return SQA.numeric_average(substitute(x, parameter), ρ_ss)
 end
 
-function _response_parameter_value(x::BasicSymbolic, parameter)
-    return _unwrap_response_number(substitute(x, parameter))
-end
-
-function _response_parameter_value(x, parameter)
+function _response_parameter_value(x, parameter, ρ_ss)
     throw(
         ArgumentError(
             "frequency-domain response requires a time-independent numeric scattering matrix; " *
@@ -136,10 +145,13 @@ function _response_parameter_value(x, parameter)
     )
 end
 
-function _numeric_scattering(G::SLH{N}, parameter) where {N}
+function _numeric_scattering(G::SLH{N}, parameter, ρ_ss) where {N}
     S = scattering(G)
-    values = ntuple(k -> _response_parameter_value(S[k], parameter), Val(N * N))
-    return SMatrix{N,N}(values)
+    values = ntuple(
+        k -> _response_parameter_value(S[k], parameter, ρ_ss),
+        Val(N * N),
+    )
+    return SMatrix{N,N,ComplexF64}(values)
 end
 
 # ──────────────────────────────────────────────
@@ -304,7 +316,7 @@ function frequency_response(
     all(Jk -> Jk isa QuantumOpticsBase.AbstractOperator, J) ||
         throw(ArgumentError("frequency response requires time-independent jump operators"))
 
-    S = _numeric_scattering(G, parameter_)
+    S = _numeric_scattering(G, parameter_, ρ_ss)
     ρmat = _operator_matrix(ρ_ss)
     backend = _prepare_backend(H, J, ρ_ss, solver)
     cache = _prepare_port_cache(S, J, ρmat)
@@ -635,7 +647,8 @@ function _quadrature_at(R::FrequencyResponse, ω::Real, port::Integer, angle::Re
     corr_ldl_plus = -_contract(wLd, xplus)
     corr_ldl_minus = -_contract(wLd, xminus)
 
-    return 1 + 2 * real(
+    return 1 +
+           2 * real(
         exp(-2im * angle) * (corr_ll_plus + corr_ll_minus) + corr_ldl_plus + corr_ldl_minus,
     )
 end
