@@ -312,6 +312,7 @@ function frequency_response(
         throw(ArgumentError("frequency response requires a time-independent Hamiltonian"))
     all(Jk -> Jk isa QuantumOpticsBase.AbstractOperator, J) ||
         throw(ArgumentError("frequency response requires time-independent jump operators"))
+    QuantumOpticsBase.check_samebases(H, ρ_ss)
 
     S = _numeric_scattering(G, parameter_, ρ_ss)
     ρmat = _operator_matrix(ρ_ss)
@@ -399,6 +400,7 @@ function _numeric_response_operator(
     R::FrequencyResponse,
     A::QuantumOpticsBase.AbstractOperator,
 )
+    QuantumOpticsBase.check_samebases(R.hamiltonian, A)
     return A
 end
 
