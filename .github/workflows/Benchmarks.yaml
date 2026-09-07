@@ -4,16 +4,16 @@ on:
     branches:
       - 'main'
     paths:
-      - '.github/workflows/Benchmarks.yml'
+      - '.github/workflows/Benchmarks.yaml'
       - 'src/**'
       - 'ext/**'
-      - 'test/runtests.jl'
+      - 'benchmarks/**'
       - 'Project.toml'
   pull_request:
     branches:
       - 'main'
     paths:
-      - '.github/workflows/Benchmarks.yml'
+      - '.github/workflows/Benchmarks.yaml'
       - 'src/**'
       - 'ext/**'
       - 'benchmarks/**'
@@ -37,7 +37,7 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     steps:
       - uses: actions/checkout@v6
-      - uses: julia-actions/setup-julia@v2
+      - uses: julia-actions/setup-julia@v3
         with:
           version: '1.12' # should run on same julia version 
           arch: x64

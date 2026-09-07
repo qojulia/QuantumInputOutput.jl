@@ -49,7 +49,7 @@ G_v2 = concatenate(SLH(1, 0, 0), G_v)
 
 G_cas = cascade(G_u2, G_d, G_v2)
 H = hamiltonian(G_cas)
-L = lindblad(G_cas)
+L = jump_operator(G_cas)
 nothing # hide
 
 #
@@ -189,6 +189,7 @@ nothing # hide
 p_t_sym = [g_u, g_in, g_out, g_v, M_ls...]
 p_t_num = [gu_, gin_, gout_, gv_, M_t_ls...]
 dict_p_t_int = Dict(p_t_sym .=> p_t_num)
+nothing # hide
 
 # The interaction picture eliminates the delay cavity `d`, so the numeric operators live
 # on the two-mode basis `bu ⊗ bv` (with `ad` mapped to the identity). Build on that basis.

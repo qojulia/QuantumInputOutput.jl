@@ -55,7 +55,7 @@ H = hamiltonian(G_t)
 
 #
 
-L = lindblad(G_t)
+L = jump_operator(G_t)
 L_R = L[1]
 
 #
@@ -158,6 +158,7 @@ p
 lT = length(T)
 G2 = zeros(lT, lT) # transmission
 G2_ref = zeros(lT, lT) # reflection
+nothing # hide
 
 # Materialize the lazy `TimeDependentSum` to a concrete operator at each time, so the
 # quantum-regression products below give a plain operator usable as the solver's initial state.

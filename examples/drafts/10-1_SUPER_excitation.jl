@@ -130,23 +130,61 @@ sol_cl = solve(prob_cl, Tsit5(); abstol, reltol)
 t_cl = sol_cl.t
 s22_cl = real.(solution_values(sol_cl, s(2, 2), eqs_cl));
 
+using PyPlot;
+pygui(true)
+
+close(123)
+figure(123)
+subplot(211)
+PyPlot.plot(t_cl, abs.(Ω.(t_cl)))
+PyPlot.grid(true)
+subplot(212)
+PyPlot.plot(t_cl, s22_cl)
+PyPlot.grid(true)
+
+### effective: 3photon process###
+
+Ω1_max = Α1_/σ1_/√(2π)
+Ω2_max = Α2_/σ2_/√(2π)
+
+Ω_3ph = Ω1_max^2*Ω2_max/(4*Δ1_*Δ2_)
+T_3ph = π/Ω_3ph
+0.01/3.99
+
+Ω_max = maximum(abs.(Ω1.(T)) + abs.(Ω2.(T)))
+Ω_eff(t) = 0.5 * Ω_3ph * abs.(abs.(Ω1.(t)) + abs.(Ω2.(t)))/Ω_max
+
+b = NLevelBasis(2)
+s(i, j) = transition(b, i, j)
+
+H_(t, psi) = Ω_eff(t)*(s(1, 2) + s(2, 1))
+
+t_, psi_ = timeevolution.schroedinger_dynamic(T, nlevelstate(b, 1), H_)
+
+s22_eff = real(expect(s(2, 2), psi_))
+subplot(212)
+PyPlot.plot(t_, s22_eff)
+
+
+111
+
 ###################################################
 ####### IOT and QuantumCumulants.jl section #######
 ###################################################
 
 # SLH triplets
-G_u2 = SLH(1, gu2*au2, 0) # input cavity 2
-G_u1 = SLH(1, gu1*au1, 0) # input cavity 1
+G_u2 = SLH(1, gu2'*au2, 0) # input cavity 2
+G_u1 = SLH(1, gu1'*au1, 0) # input cavity 1
 G_2lvl = SLH(1, √(γ)*s(1, 2), 0) # 2-level system
-G_v1 = SLH(1, gv1*av1, 0) # output cavity 1
-G_v2 = SLH(1, gv2*av2, 0) # output cavity 2
+G_v1 = SLH(1, gv1'*av1, 0) # output cavity 1
+G_v2 = SLH(1, gv2'*av2, 0) # output cavity 2
 
 # 2I-2O cascade SLH triplet
 G_cas = ▷(G_u2, G_u1, G_2lvl, G_v1, G_v2) # cascade
 
 # Hamiltonian and Lindbladian
 Hcas = hamiltonian(G_cas)
-Lcas = lindblad(G_cas)[1]
+Lcas = jump_operator(G_cas)[1]
 Lcasd = adjoint(Lcas)
 
 # Time-dependent couplings
@@ -526,11 +564,11 @@ display(pl4)
 # TODO: No substitution with γ/2! - interpretation: decay rate twice
 
 # SLH triplets
-G_u2 = SLH(1, gu2*au2, 0) # input cavity 2
-G_u1 = SLH(1, gu1*au1, 0) # input cavity 1
+G_u2 = SLH(1, gu2'*au2, 0) # input cavity 2
+G_u1 = SLH(1, gu1'*au1, 0) # input cavity 1
 G_2lvl = SLH(1, √(γ)*s(1, 2), 0) # 2-level system # TODO
-G_v1 = SLH(1, gv1*av1, 0) # output cavity 1
-G_v2 = SLH(1, gv2*av2, 0) # output cavity 2
+G_v1 = SLH(1, gv1'*av1, 0) # output cavity 1
+G_v2 = SLH(1, gv2'*av2, 0) # output cavity 2
 
 # Channel-wise cascades
 G_ch1 = ▷(G_u2, G_2lvl, G_v2) # pulse 1
@@ -539,8 +577,8 @@ Gcon = ⊞(G_ch1, G_ch2) # concatenation
 
 # Hamiltonian and Lindblad operators (two channels)
 Hcon = hamiltonian(Gcon)
-Lch1g = lindblad(Gcon)[1]
-Lch2g = lindblad(Gcon)[2]
+Lch1g = jump_operator(Gcon)[1]
+Lch2g = jump_operator(Gcon)[2]
 Ldch1g = adjoint(Lch1g)
 Ldch2g = adjoint(Lch2g)
 
@@ -687,16 +725,16 @@ avn = Destroy(hs, :a_v, 3)
 ###################################################
 
 # SLH triplets
-G_u = SLH(1, gu*aun, 0) # input cavity
+G_u = SLH(1, gu'*aun, 0) # input cavity
 G_2lvls = SLH(1, √(γ)*σ(1, 2), 0) # 2-level system 
-G_v = SLH(1, gv*avn, 0) # output cavity 
+G_v = SLH(1, gv'*avn, 0) # output cavity 
 
 # I-O cascade
 G_cas_1m = ▷(G_u, G_2lvls, G_v)
 
 # Hamiltonian and Lindbladian
 Hcas_1m = hamiltonian(G_cas_1m)
-Lcas_1m = lindblad(G_cas_1m)[1]
+Lcas_1m = jump_operator(G_cas_1m)[1]
 Lcas_1md = adjoint(Lcas_1m)
 
 # Time-dependent couplings
@@ -831,7 +869,7 @@ T = [dt:dt:Tend;]
 G_cas_1m0 = ▷(G_u, G_2lvls, G_v)
 
 Hcas_1m0 = hamiltonian(G_cas_1m0)
-Lcas_1m0 = lindblad(G_cas_1m0)[1]
+Lcas_1m0 = jump_operator(G_cas_1m0)[1]
 Lcas_1m0d = adjoint(Lcas_1m0)
 
 # Set v-coupling to zero (collect only input-system correlations)
@@ -1154,16 +1192,16 @@ gu, gv = cnumbers("g_{u} g_{v}")
 ###################################################
 
 # SLH triplets
-G_u = SLH(1, gu*aun, 0) # input cavity
+G_u = SLH(1, gu'*aun, 0) # input cavity
 G_2lvls = SLH(1, √(γ)*σ(1, 2), 0) # 2-level system 
-G_v = SLH(1, gv*avn, 0) # output cavity 
+G_v = SLH(1, gv'*avn, 0) # output cavity 
 
 # I-O cascade
 G_cas_1m = ▷(G_u, G_2lvls, G_v)
 
 # Hamiltonian and Lindbladian
 Hcas_1m = hamiltonian(G_cas_1m)
-Lcas_1m = lindblad(G_cas_1m)[1]
+Lcas_1m = jump_operator(G_cas_1m)[1]
 Lcas_1md = adjoint(Lcas_1m)
 
 # Time-dependent couplings

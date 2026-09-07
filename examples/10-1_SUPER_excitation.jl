@@ -1,6 +1,6 @@
 # # Input-Output Analysis of Quantum Dot SUPER Excitation
 #
-# This example analyzes the SUPER excitation scheme for quantum dots with the input-output formalism [J. Kerber et al., TODO](https://arxiv.org/). Two red-detuned pulses allow for a close to 100% excitation of a two-level quantum emitter. At the microscopic level, the SUPER mechanism exhibits its nonlinear three-photon Raman-type character, leading to a net photon-number change of −2 in one mode and +1 in the other. 
+# This example analyzes the SUPER excitation scheme for quantum dots with the input-output formalism [J. Kerber et al., arXiv (2026)](https://doi.org/10.48550/arXiv.2608.28470). Two red-detuned pulses allow for a close to 100% excitation of a two-level quantum emitter. At the microscopic level, the SUPER mechanism exhibits its nonlinear three-photon Raman-type character, leading to a net photon-number change of −2 in one mode and +1 in the other. 
 
 # In the first part we describe the dynamics within a cumulant expansion approach for coherent light. We then transform into the interaction-picture of the input and output cavities, which allows us to describe the interaction with large Fock states. 
 
@@ -36,11 +36,11 @@ av2 = Destroy(h, :a_v2, 5)
 @independent_variables t # Symbolic time variable
 
 ## SLH triplets
-G_u2 = SLH(1, gu2*au2, 0) # input cavity 2
-G_u1 = SLH(1, gu1*au1, 0) # input cavity 1
+G_u2 = SLH(1, gu2'*au2, 0) # input cavity 2
+G_u1 = SLH(1, gu1'*au1, 0) # input cavity 1
 G_2lvl = SLH(1, √(γ)*s(1, 2), 0) # 2-level system
-G_v1 = SLH(1, gv1*av1, 0) # output cavity 1
-G_v2 = SLH(1, gv2*av2, 0) # output cavity 2
+G_v1 = SLH(1, gv1'*av1, 0) # output cavity 1
+G_v2 = SLH(1, gv2'*av2, 0) # output cavity 2
 
 ## cascade SLH triplets 
 G_cas = ▷(G_u2, G_u1, G_2lvl, G_v1, G_v2)
@@ -48,13 +48,13 @@ nothing # hide
 
 #
 
-## Hamiltonian and Lindbladian
+## Hamiltonian and jump operator
 Hcas = hamiltonian(G_cas)
-Lcas = lindblad(G_cas)[1]
+Lcas = jump_operator(G_cas)[1]
 Lcasd = adjoint(Lcas)
 nothing # hide 
 
-# To deal with time-dependent functions in QuantumCumulants, we need to register them. Furthermore, due to a problem for the conjugate of registered functions (conj is ignored), we first need to create the adjoint of the jump operators and then substitute the time-dependent functions. 
+# To deal with time-dependent functions in [QuantumCumulants.jl](https://github.com/qojulia/QuantumCumulants.jl), we need to register them. 
 
 ## Time-dependent couplings
 @register_symbolic gu1_t(t)
@@ -144,13 +144,15 @@ nothing # hide
 
 #
 
-common = (;
-    xlims = (t_cas[1]-0.01, t_cas[end]),
-    tickfontsize = 18,
-    guidefontsize = 18,
-    legendfontsize = 18,
+common = (; xlims = (t_cas[1]-0.01, t_cas[end]))
+p1 = plot(
+    t_cas,
+    real.(s22_cas);
+    color = :red,
+    label = false,
+    ylabel = L"\langle\hat\sigma^{ee}\rangle",
+    common...,
 )
-p1 = plot(t_cas, real.(s22_cas); color = :red, label = L"\mathrm{cascade}")
 p2 = plot(
     t_cas,
     nu1_cas;
@@ -193,12 +195,13 @@ p3 = plot(
     common...,
 )
 plot!(p3, t_cas, nu2_cas .+ nv2_cas .- nu2_cas[1]; color = :red, label = L"\mathrm{mode~2}")
-pl1 = plot(p1, p2, p3; layout = (3, 1), size = (800, 800))
-display(pl1)
+plot(p1, p2, p3; layout = (3, 1), size = (600, 700))
+
+# We can see the net photon-number change of −2 in one mode and +1 in the other. 
 
 # ## Interaction picture 
 
-## In the following, we will transform into the interaction picture of the virtual cavities. 
+# In the following, we will transform into the interaction picture of the virtual cavities and solve the dynamics. 
 
 ## Interaction picture: cavity dynamics
 H_uv = hamiltonian(▷(G_u2, G_u1, G_v1, G_v2))
@@ -259,6 +262,7 @@ nu1_int = abs2.(sol_values(sol_int, au1, eqs_int))
 nu2_int = abs2.(sol_values(sol_int, au2, eqs_int))
 nv1_int = abs2.(sol_values(sol_int, av1, eqs_int))
 nv2_int = abs2.(sol_values(sol_int, av2, eqs_int))
+nothing # hide
 
 #
 
@@ -272,13 +276,11 @@ pl4 = plot(
     xlims = (t_int[1]-0.01, t_int[end]),
     yticks = ([-2, -1, 0, 1], latexstring.([-2, -1, 0, 1])),
     legend = :right,
-    tickfontsize = 18,
-    guidefontsize = 18,
-    legendfontsize = 18,
-    size = (800, 400),
+    size = (500, 350),
 )
 plot!(pl4, t_int, nu2_int .- nu2_int[1]; color = :red, label = L"\mathrm{mode~2~(int.)}")
-display(pl4)
+
+# In the interaction picture we can directly observe the photon number change of -2 in one mode and +1 in the other.
 
 # ## Fock state input 
 
@@ -303,7 +305,7 @@ dict_fock = Dict([g_ls; M_ls] .=> [g_t_ls; M_t_ls])
 H_int_fock = to_numeric(H_int, b; parameter = Dict(γ=>γ_), time_parameter = dict_fock)
 L_int_fock = to_numeric(L_int, b; parameter = Dict(γ=>γ_), time_parameter = dict_fock)
 
-## To solve the dynamics, we create the time-dependent function for the open quantum system and define the initial state.
+# To solve the dynamics, we create the time-dependent function for the open quantum system and define the initial state.
 
 function input_output(t, ρ)
     Ht = H_int_fock(t)
@@ -311,7 +313,7 @@ function input_output(t, ρ)
     return Ht, J, QuantumOptics.dagger.(J)
 end
 
-# initial state
+## initial state
 ψu2 = fockstate(bu2, n2_fock)
 ψu1 = fockstate(bu1, n1_fock)
 ψs1 = nlevelstate(bs1, 1)
@@ -320,12 +322,13 @@ end
 ψ0 = tensor(ψu2, ψu1, ψs1, ψv1, ψv2)
 
 T_fock = [0:0.001:1;]*T[end]
-# t_fock, ρt_fock = timeevolution.master_dynamic(T_fock, ψ0, input_output; abstol, reltol)
+## t_fock, ρt_fock = timeevolution.master_dynamic(T_fock, ψ0, input_output; abstol, reltol)
 using Random
 Random.seed!(1) # hide
 t_fock, ρt_fock = timeevolution.mcwf_dynamic(T_fock, ψ0, input_output; abstol, reltol)
+nothing # hide
 
-# Due to the relatively long computation time of timeevolution.master_dynamic, we simulate a single trajectory with timeevolution.mcwf_dynamic.
+# Due to the relatively long computation time of `timeevolution.master_dynamic`, we simulate a single trajectory with `timeevolution.mcwf_dynamic`.
 
 ## Expectation values
 s22_fock = real.(expect(s(2, 2), ρt_fock))
@@ -334,13 +337,15 @@ nu2_fock = real.(expect(au2'au2, ρt_fock))
 nv1_fock = real.(expect(av1'av1, ρt_fock))
 nv2_fock = real.(expect(av2'av2, ρt_fock))
 
-common = (;
-    xlims = (t_fock[1]-0.01, t_fock[end]),
-    tickfontsize = 18,
-    guidefontsize = 18,
-    legendfontsize = 18,
+common = (; xlims = (t_fock[1]-0.01, t_fock[end]))
+p3_1 = plot(
+    t_int,
+    s22_int;
+    color = :blue,
+    label = L"\mathrm{coherent state}",
+    ylabel = L"\langle\hat\sigma^{ee}\rangle",
+    common...,
 )
-p3_1 = plot(t_int, s22_int; color = :blue, label = L"\mathrm{coherent state}")
 plot!(p3_1, t_fock, s22_fock; color = :red, label = L"\mathrm{Fock state}")
 p3_2 = plot(
     t_fock,
@@ -375,8 +380,7 @@ plot!(
     color = :red,
     label = L"\mathrm{Coherent: mode~2}",
 )
-pl3 = plot(p3_1, p3_2; layout = (2, 1), size = (800, 600))
-display(pl3)
+pl3 = plot(p3_1, p3_2; layout = (2, 1), size = (600, 500))
 
 # Due to the vanishing relative phase of the Fock states, the oscillations disappear.
 

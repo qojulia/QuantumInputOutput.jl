@@ -45,11 +45,11 @@ H1 = hamiltonian(G_cav_L_R_drive)
 
 # 
 
-L1_L = lindblad(G_cav_L_R_drive)[1]
+L1_L = jump_operator(G_cav_L_R_drive)[1]
 
 # 
 
-L1_R = lindblad(G_cav_L_R_drive)[2]
+L1_R = jump_operator(G_cav_L_R_drive)[2]
 
 # The typical cavity drive-term $\sqrt{\kappa_L} E (a^\dagger + a)$ is a combination of Hamiltonian term and Lindblad. 
 # We use the function `meanfield` to obtain the equation for the intra-cavity field, which leads to a closed set of equations in this particular case.  
@@ -136,9 +136,9 @@ p
 
 # In the following, we include $N=2$ two-level atoms in the cavity and simulate the transmission and reflection of a coherent Gaussian pulse with a mean photon number of $|\alpha|^2 = 1/10$. We assume that the atoms are on resonance with the cavity, i.e. $\Delta = \Delta_c = \Delta_a$.
 
-# Obtain the ModelingToolkit independent variable from a seed mean-field problem and
-# register the classical drive as a function of it (QuantumCumulants v0.5 convention).
-t = meanfield([a], -Δ*a'a, [a]).iv
+# Define the ModelingToolkit independent variable and register the classical drive as a
+# function of it.
+@independent_variables t
 @register_symbolic Et(tt)
 
 G_d_t = SLH(1, Et(t), 0)
@@ -153,11 +153,11 @@ H2 = G_ac_drive.hamiltonian
 
 #
 
-L2_L = G_ac_drive.lindblad[1]
+L2_L = G_ac_drive.jump_operator[1]
 
 #
 
-L2_R = G_ac_drive.lindblad[2]
+L2_R = G_ac_drive.jump_operator[2]
 
 # We derive the equations of motion for system with a second-order mean-field approximation. 
 

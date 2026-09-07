@@ -24,8 +24,9 @@ using Test
     G_v = SLH(1, gv'*av, 0) # output cavity
 
     @test size(scattering(G_c)) == (1, 1)
-    @test length(lindblad(G_c)) == 1
+    @test length(jump_operator(G_c)) == 1
     @test iszero(simplify(hamiltonian(G_c) - Δ*c'c))
+    @test_deprecated lindblad(G_c)
 
     SLH(1, [√(γ)*c], Δ*c'c)
     @test isequal(G_c, SLH(1, [√(γ)*c], Δ*c'c))
@@ -33,7 +34,7 @@ using Test
     @testset "simple_cascade" begin
         G1 = G_u ▷ G_c
         @test size(scattering(G1)) == (1, 1)
-        @test iszero(simplify(lindblad(G1)[1] - simplify(gu'*au + √(γ)*c)))
+        @test iszero(simplify(jump_operator(G1)[1] - simplify(gu'*au + √(γ)*c)))
         expected_H = simplify(
             hamiltonian(G_c) - 1im/2*((√(γ)*c)'*(1)*gu'*au - (gu'*au)'*(1)*(√(γ)*c)),
         )
@@ -46,7 +47,23 @@ using Test
         @test isequal(G2, ▷(G1, G_v))
         @test isequal(G2, G3)
 
-        @test iszero(simplify(lindblad(G2)[1] - (gu'*au + √(γ)*c + gv'*av)))
+        @test iszero(simplify(jump_operator(G2)[1] - (gu'*au + √(γ)*c + gv'*av)))
+    end
+
+    @testset "cascade port mismatch" begin
+        G_two_port = G_u ⊞ G_c
+        expected_message = "cannot cascade SLH systems with different numbers of ports: 1 and 2"
+
+        for compose in (▷, cascade)
+            exception = try
+                compose(G_u, G_two_port)
+                nothing
+            catch exception
+                exception
+            end
+            @test exception isa DimensionMismatch
+            @test exception.msg == expected_message
+        end
     end
 
     @testset "simple_concatenate" begin
@@ -56,9 +73,9 @@ using Test
         Gc = concatenate(G1, G2)
 
         @test size(scattering(Gc)) == (2, 2)
-        @test length(lindblad(Gc)) == 2
-        @test isequal(lindblad(Gc)[1], gu'*au)
-        @test isequal(lindblad(Gc)[2], √(γ)*c)
+        @test length(jump_operator(Gc)) == 2
+        @test isequal(jump_operator(Gc)[1], gu'*au)
+        @test isequal(jump_operator(Gc)[2], √(γ)*c)
         @test isequal(hamiltonian(Gc), Δ*c'c)
 
         Gc2 = G1 ⊞ G2
@@ -81,9 +98,9 @@ using Test
         G_out = SLH(1, gv1' * av1, 0) ⊞ SLH(1, gv2' * av2, 0)
         G_cas = G_bs ▷ G_out
 
-        @test length(lindblad(G_cas)) == 2
-        @test iszero(simplify(lindblad(G_cas)[1] - (gv1' * av1)))
-        @test iszero(simplify(lindblad(G_cas)[2] - (gv2' * av2)))
+        @test length(jump_operator(G_cas)) == 2
+        @test iszero(simplify(jump_operator(G_cas)[1] - (gv1' * av1)))
+        @test iszero(simplify(jump_operator(G_cas)[2] - (gv2' * av2)))
     end
 
     @testset "show" begin
@@ -163,35 +180,35 @@ using Test
             G1 = SLH(1, gu_f, H_s)
             G2 = SLH(1, gv_f, H_s)
             G_cas = G1 ▷ G2
-            @test lindblad(G_cas)[1](0.5) == gu_f(0.5) + gv_f(0.5)
+            @test jump_operator(G_cas)[1](0.5) == gu_f(0.5) + gv_f(0.5)
         end
 
         @testset "cascade evaluates mixed static/time-dependent operators" begin
             G_cas = SLH(1, L_s, H_s) ▷ SLH(1, gu_f, H_s)
-            @test lindblad(G_cas)[1](0.5) == L_s + gu_f(0.5)
+            @test jump_operator(G_cas)[1](0.5) == L_s + gu_f(0.5)
         end
 
         @testset "concatenation evaluates mixed static/time-dependent operators" begin
             G_cat = SLH(1, L_s, H_s) ⊞ SLH(1, gu_f, H_s)
-            @test lindblad(G_cat)[1](0.5) == L_s
-            @test lindblad(G_cat)[2](0.5) == gu_f(0.5)
+            @test jump_operator(G_cat)[1](0.5) == L_s
+            @test jump_operator(G_cat)[2](0.5) == gu_f(0.5)
         end
 
         @testset "concatenation preserves static operators" begin
             G_cat = SLH(1, L_s, H_s) ⊞ SLH(1, L_s, H_s)
-            @test lindblad(G_cat)[1] == L_s
-            @test lindblad(G_cat)[2] == L_s
+            @test jump_operator(G_cat)[1] == L_s
+            @test jump_operator(G_cat)[2] == L_s
         end
 
         @testset "public accessors preserve time-dependent operators" begin
             G_td = SLH(1, gu_f, H_s)
-            @test lindblad(G_td)[1](0.5) == gu_f(0.5)
+            @test jump_operator(G_td)[1](0.5) == gu_f(0.5)
             @test hamiltonian(G_td)(0.5) == H_s
         end
 
         @testset "public accessors preserve static operators" begin
             G_s = SLH(1, L_s, H_s)
-            @test lindblad(G_s)[1] == L_s
+            @test jump_operator(G_s)[1] == L_s
             @test hamiltonian(G_s) == H_s
         end
 

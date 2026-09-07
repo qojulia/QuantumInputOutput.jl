@@ -8,7 +8,7 @@ using Symbolics: Symbolics
 using SpecialFunctions: erf
 using DataInterpolations: LinearInterpolation, ExtrapolationType
 using NumericalIntegration: cumul_integrate
-using LinearAlgebra: LinearAlgebra, I, mul!
+using LinearAlgebra: LinearAlgebra, I, mul!, Hermitian
 using OrdinaryDiffEq: OrdinaryDiffEq, ODEProblem, Tsit5, solve
 using StaticArrays: StaticArrays, SMatrix, SVector
 using FunctionWrappers: FunctionWrappers, FunctionWrapper
@@ -18,6 +18,7 @@ const SQA = SecondQuantizedAlgebra
 export SLH,
     Gaussian,
     scattering,
+    jump_operator,
     lindblad,
     hamiltonian,
     # Composition

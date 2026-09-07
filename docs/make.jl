@@ -30,6 +30,7 @@ pages = [
         "examples/07-2_hong-ou-mandel__quantum-pulse.md",
         "examples/08-1_pulse-delay__simple.md",
         "examples/09-1_coherent-feedback-squeezing__Gough-Wildfeuer-2009.md",
+        "examples/10-1_SUPER_excitation.md",
     ],
 ]
 
@@ -38,6 +39,7 @@ makedocs(
     modules = QuantumInputOutput,
     format = Documenter.HTML(;
         canonical = "https://qojulia.github.io/QuantumInputOutput.jl",
+        assets = [asset("assets/favicon.png", class = :ico, islocal = true)],
     ),
     pages = pages,
     clean = true,
@@ -54,4 +56,5 @@ deploydocs(
     target = "build",
     branch = "gh-pages",
     push_preview = true,
+    versions = ["stable" => "v^", "v#.#", "dev" => "dev"],
 )
