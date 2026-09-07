@@ -230,7 +230,7 @@ using Test
 
         mismatched_basis = QuantumOpticsBase.GenericBasis(length(b))
         mismatched_ρ = QuantumOpticsBase.Operator(mismatched_basis, Matrix(ρ.data))
-        @test_throws QuantumOpticsBase.IncompatibleBases frequency_response(
+        @test_throws ArgumentError frequency_response(
             Glin,
             b,
             mismatched_ρ;
@@ -239,18 +239,8 @@ using Test
 
         a_num = to_numeric(a, b)
         mismatched_a = QuantumOpticsBase.Operator(mismatched_basis, Matrix(a_num.data))
-        @test_throws QuantumOpticsBase.IncompatibleBases susceptibility(
-            R,
-            mismatched_a,
-            a_num,
-            0.0,
-        )
-        @test_throws QuantumOpticsBase.IncompatibleBases susceptibility(
-            R,
-            a_num,
-            mismatched_a,
-            0.0,
-        )
+        @test_throws ArgumentError susceptibility(R, mismatched_a, a_num, 0.0)
+        @test_throws ArgumentError susceptibility(R, a_num, mismatched_a, 0.0)
 
         Gone = SLH(1, √(κ1) * a, -Δ * a' * a)
         p1 = Dict(Δ => 0.0, κ1 => 1.0)
