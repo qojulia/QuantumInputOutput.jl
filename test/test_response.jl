@@ -88,11 +88,7 @@ using Test
         @test scattering_parameter(R1, 0.0) ≈ -1 atol = 1e-8
 
         phase = 0.37
-        Gphase = SLH(
-            SecondQuantizedAlgebra.expim(ϕ),
-            √(κ1) * a,
-            -Δ * a' * a,
-        )
+        Gphase = SLH(SecondQuantizedAlgebra.expim(ϕ), √(κ1) * a, -Δ * a' * a)
         @test scattering(Gphase)[1, 1] isa SecondQuantizedAlgebra.Coeff
 
         pp = Dict(Δ => 0.0, κ1 => κ_, ϕ => phase)
@@ -100,6 +96,19 @@ using Test
         Rp = frequency_response(Gphase, b, ρp; parameter = pp)
         @test eltype(Rp.scattering) === ComplexF64
         @test scattering_parameter(Rp, 0.0) ≈ -exp(im * phase) atol = 1e-8
+
+        # QIO beam splitters also commonly use ordinary real symbolic sin/cos entries.
+        angle = 0.23
+        Grotation = SLH(
+            [cos(ϕ) -sin(ϕ); sin(ϕ) cos(ϕ)],
+            [√(κ1) * a, √(κ2) * a],
+            -Δ * a' * a,
+        )
+        pr = Dict(Δ => 0.0, κ1 => 0.4, κ2 => 0.6, ϕ => angle)
+        ρr = steady(Grotation, pr)
+        Rr = frequency_response(Grotation, b, ρr; parameter = pr)
+        @test Matrix(Rr.scattering) ≈
+              ComplexF64[cos(angle) -sin(angle); sin(angle) cos(angle)]
     end
 
     @testset "internal loss reduces observable reflection" begin
