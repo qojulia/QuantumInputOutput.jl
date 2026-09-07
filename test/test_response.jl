@@ -184,4 +184,58 @@ using Test
         @test all(isfinite, emission)
         @test all(emission .>= -1e-9)
     end
+
+    @testset "API contracts and one-shot wrappers" begin
+        @test_throws ArgumentError DenseHessenberg(; deflation = 0.0)
+        @test_throws ArgumentError DenseHessenberg(; atol = 0.0)
+
+        p = Dict(Δ => 0.0, κ1 => 0.4, κ2 => 0.6)
+        ρ = steady(Glin, p)
+        R = frequency_response(Glin, b, ρ; parameter = p)
+        ω = [-0.3, 0.0, 0.3]
+
+        @test_throws ArgumentError output_field(Glin, 1; input = 1.0)
+        @test_throws ArgumentError output_field(R, 1; input = 1.0)
+        @test_throws ArgumentError output_field(Glin, 1; input = :invalid)
+        @test_throws ArgumentError output_field(R, 1; input = :invalid)
+        @test_throws DimensionMismatch output_field(Glin, 1; input = [1.0])
+        @test_throws DimensionMismatch output_field(R, 1; input = [1.0])
+
+        @test_throws ArgumentError scattering_response(R, Float64[])
+        @test_throws BoundsError scattering_parameter(R, 0.0; in_port = 0)
+        @test_throws BoundsError scattering_parameter(R, 0.0; out_port = 3)
+        @test_throws ArgumentError scattering_parameter(R, 0.0; component = :invalid)
+        @test_throws BoundsError emission_spectrum(R, 0.0; port = 0)
+        @test_throws BoundsError quadrature_spectrum(R, 0.0; port = 3)
+
+        @test scattering_response(Glin, b, ρ, ω; parameter = p).normal ≈
+              scattering_response(R, ω).normal
+        @test susceptibility(Glin, b, ρ, a, a', ω; parameter = p) ≈
+              susceptibility(R, a, a', ω)
+        @test emission_spectrum(Glin, b, ρ, ω; parameter = p) ≈ emission_spectrum(R, ω)
+        @test quadrature_spectrum(Glin, b, ρ, ω; parameter = p, angle = 0.2) ≈
+              quadrature_spectrum(R, ω; angle = 0.2)
+
+        @test_throws ArgumentError frequency_response(Glin, b, 2 * ρ; parameter = p)
+        excited = dm(fockstate(b, 1))
+        @test_throws ArgumentError frequency_response(Glin, b, excited; parameter = p)
+        unchecked = frequency_response(
+            Glin,
+            b,
+            excited;
+            parameter = p,
+            solver = DenseHessenberg(; check_stationary = false),
+        )
+        @test unchecked isa FrequencyResponse
+
+        Gone = SLH(1, √(κ1) * a, -Δ * a' * a)
+        p1 = Dict(Δ => 0.0, κ1 => 1.0)
+        ρ1 = steady(Gone, p1)
+        R1 = frequency_response(Gone, b, ρ1; parameter = p1)
+        L1 = to_numeric(√(κ1) * a, b; parameter = p1)
+        expected = L1 + 2.0 * identityoperator(b)
+        @test Matrix(output_field(R1, 1; input = 2.0).data) ≈ Matrix(expected.data)
+        @test Matrix(to_numeric(output_field(Gone, 1; input = 2.0), b; parameter = p1).data) ≈
+              Matrix(expected.data)
+    end
 end
