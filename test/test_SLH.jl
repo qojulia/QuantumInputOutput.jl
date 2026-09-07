@@ -4,7 +4,6 @@ using QuantumOptics
 using QuantumOpticsBase: dagger
 using SymbolicUtils
 using FunctionWrappers: FunctionWrapper
-using StaticArrays
 using Test
 
 @testset "SLH" begin
@@ -24,24 +23,17 @@ using Test
     G_c = SLH(1, √(γ)*c, Δ*c'c) # system cavity
     G_v = SLH(1, gv'*av, 0) # output cavity
 
-    G_c_S = scattering(G_c)
-    G_c_L = jump_operator(G_c)
-    G_c_H = hamiltonian(G_c)
-
-    @test G_c_S == G_c.scattering
-    @test G_c_L == G_c.jump_operator
-    @test G_c_H == G_c.hamiltonian
+    @test size(scattering(G_c)) == (1, 1)
+    @test length(jump_operator(G_c)) == 1
+    @test iszero(simplify(hamiltonian(G_c) - Δ*c'c))
     @test_deprecated lindblad(G_c)
-
-    @test G_c_S isa SMatrix{1,1}
-    @test G_c_L isa SVector{1}
 
     SLH(1, [√(γ)*c], Δ*c'c)
     @test isequal(G_c, SLH(1, [√(γ)*c], Δ*c'c))
 
     @testset "simple_cascade" begin
         G1 = G_u ▷ G_c
-        @test scattering(G1) isa SMatrix{1,1}
+        @test size(scattering(G1)) == (1, 1)
         @test iszero(simplify(jump_operator(G1)[1] - simplify(gu'*au + √(γ)*c)))
         expected_H = simplify(
             hamiltonian(G_c) - 1im/2*((√(γ)*c)'*(1)*gu'*au - (gu'*au)'*(1)*(√(γ)*c)),
@@ -80,7 +72,6 @@ using Test
 
         Gc = concatenate(G1, G2)
 
-        @test scattering(Gc) isa SMatrix{2,2}
         @test size(scattering(Gc)) == (2, 2)
         @test length(jump_operator(Gc)) == 2
         @test isequal(jump_operator(Gc)[1], gu'*au)
@@ -112,7 +103,72 @@ using Test
         @test iszero(simplify(jump_operator(G_cas)[2] - (gv2' * av2)))
     end
 
-    @testset "numeric type stability" begin
+    @testset "show" begin
+        @test sprint(show, G_u) == "SLH{1} with 1 port"
+        @test sprint(show, MIME("text/plain"), G_u) ==
+              "SLH{1} with 1 port\n" *
+              "  S = 1×1 identity\n" *
+              "  L = 1 symbolic jump operator\n" *
+              "  H = 0"
+
+        @test sprint(show, MIME("text/plain"), G_u ⊞ G_c) ==
+              "SLH{2} with 2 ports\n" *
+              "  S = 2×2 identity\n" *
+              "  L = 2 symbolic jump operators\n" *
+              "  H = symbolic, 1 term"
+
+        # no equation ever reaches the output, whatever the system size
+        M = 6
+        @variables s[1:M, 1:M]::Complex
+        ops = [gu * au, √(γ) * c, gv * av, gu * au * c' * av, c' * c * av, au * av' * c]
+        G_big = SLH([s[i, j] for i = 1:M, j = 1:M], ops, sum(ops[i]' * ops[i] for i = 1:M))
+        @test sprint(show, MIME("text/plain"), G_big) ==
+              "SLH{6} with 6 ports\n" *
+              "  S = 6×6 symbolic\n" *
+              "  L = 6 symbolic jump operators\n" *
+              "  H = symbolic, 8 terms"
+
+        # passive component: nothing couples to the ports
+        @variables r::Real τ::Real
+        @test sprint(show, MIME("text/plain"), SLH([r τ; τ -r], [0, 0], 0)) ==
+              "SLH{2} with 2 ports\n" *
+              "  S = 2×2 symbolic\n" *
+              "  L = 2 jump operators (all zero)\n" *
+              "  H = 0"
+
+        @test sprint(show, MIME("text/plain"), SLH(1, [0], Δ)) ==
+              "SLH{1} with 1 port\n" *
+              "  S = 1×1 identity\n" *
+              "  L = 1 jump operator (all zero)\n" *
+              "  H = symbolic"
+
+        @test sprint(show, MIME("text/plain"), SLH(1, [0], 2)) ==
+              "SLH{1} with 1 port\n" *
+              "  S = 1×1 identity\n" *
+              "  L = 1 jump operator (all zero)\n" *
+              "  H = 2"
+
+        L_f = FunctionWrapper{typeof(gu' * au),Tuple{Float64}}(t -> gu' * au)
+        @test sprint(show, MIME("text/plain"), SLH(1, L_f, 0 * au)) ==
+              "SLH{1} with 1 port\n" *
+              "  S = 1×1 identity\n" *
+              "  L = 1 time-dependent jump operator\n" *
+              "  H = time-dependent"
+
+        bc = FockBasis(4)
+        a_op = destroy(bc)
+        @test sprint(
+            show,
+            MIME("text/plain"),
+            SLH(1, sparse(a_op), sparse(dagger(a_op) * a_op)),
+        ) ==
+              "SLH{1} with 1 port\n" *
+              "  S = 1×1 identity\n" *
+              "  L = 1 numeric jump operator (5×5)\n" *
+              "  H = numeric, 5×5"
+    end
+
+    @testset "numeric operators" begin
         bc = FockBasis(4)
         a_op = destroy(bc)
         H_s = sparse(0.5 * dagger(a_op) * a_op)
@@ -120,62 +176,40 @@ using Test
         gu_f(t) = exp(-t^2) * sparse(a_op)
         gv_f(t) = exp(-(t - 2)^2) * sparse(a_op)
 
-        @testset "static SLH concreteness" begin
-            G = SLH(1, L_s, H_s)
-            @test eltype(jump_operator(G)) === typeof(L_s)
-            @test typeof(hamiltonian(G)) === typeof(H_s)
-        end
-
-        @testset "time-dep SLH wraps into FunctionWrapper" begin
-            G_td = SLH(1, gu_f, H_s)
-            @test eltype(jump_operator(G_td)) <: FunctionWrapper
-            @test typeof(hamiltonian(G_td)) <: FunctionWrapper
-        end
-
-        @testset "cascade preserves FunctionWrapper" begin
+        @testset "cascade evaluates time-dependent operators" begin
             G1 = SLH(1, gu_f, H_s)
             G2 = SLH(1, gv_f, H_s)
             G_cas = G1 ▷ G2
-            @test eltype(jump_operator(G_cas)) <: FunctionWrapper
-            @test typeof(hamiltonian(G_cas)) <: FunctionWrapper
-            @inferred jump_operator(G_cas)[1](0.5)
+            @test jump_operator(G_cas)[1](0.5) == gu_f(0.5) + gv_f(0.5)
         end
 
-        @testset "cascade mixed static/time-dep wraps uniformly" begin
+        @testset "cascade evaluates mixed static/time-dependent operators" begin
             G_cas = SLH(1, L_s, H_s) ▷ SLH(1, gu_f, H_s)
-            @test eltype(jump_operator(G_cas)) <: FunctionWrapper
-            @test eltype(jump_operator(G_cas)) !== Any
+            @test jump_operator(G_cas)[1](0.5) == L_s + gu_f(0.5)
         end
 
-        @testset "concatenation mixed static/time-dep wraps uniformly" begin
+        @testset "concatenation evaluates mixed static/time-dependent operators" begin
             G_cat = SLH(1, L_s, H_s) ⊞ SLH(1, gu_f, H_s)
-            LT = eltype(jump_operator(G_cat))
-            @test LT <: FunctionWrapper
-            @test LT !== Any
-            @inferred jump_operator(G_cat)[1](0.5)
-            @inferred jump_operator(G_cat)[2](0.5)
+            @test jump_operator(G_cat)[1](0.5) == L_s
+            @test jump_operator(G_cat)[2](0.5) == gu_f(0.5)
         end
 
-        @testset "concatenation static stays static" begin
+        @testset "concatenation preserves static operators" begin
             G_cat = SLH(1, L_s, H_s) ⊞ SLH(1, L_s, H_s)
-            @test eltype(jump_operator(G_cat)) === typeof(L_s)
-            @test !(eltype(jump_operator(G_cat)) <: FunctionWrapper)
+            @test jump_operator(G_cat)[1] == L_s
+            @test jump_operator(G_cat)[2] == L_s
         end
 
-        @testset "FunctionWrapper call is inferred" begin
+        @testset "public accessors preserve time-dependent operators" begin
             G_td = SLH(1, gu_f, H_s)
-            l = jump_operator(G_td)[1]
-            @inferred l(0.5)
+            @test jump_operator(G_td)[1](0.5) == gu_f(0.5)
+            @test hamiltonian(G_td)(0.5) == H_s
         end
 
-        @testset "_op_type extracts type from FunctionWrapper SLH" begin
-            G_td = SLH(1, gu_f, H_s)
-            @test QuantumInputOutput._op_type(G_td) === typeof(H_s)
-        end
-
-        @testset "_op_type returns nothing for static SLH" begin
+        @testset "public accessors preserve static operators" begin
             G_s = SLH(1, L_s, H_s)
-            @test QuantumInputOutput._op_type(G_s) === nothing
+            @test jump_operator(G_s)[1] == L_s
+            @test hamiltonian(G_s) == H_s
         end
 
         @testset "SLH with only plain closures errors" begin
@@ -184,13 +218,5 @@ using Test
             @test_throws ErrorException SLH([1 0; 0 1], [bare_f, bare_g], bare_g)
         end
 
-        @testset "feedback preserves FunctionWrapper type" begin
-            G1 = SLH(1, gu_f, H_s)
-            G2 = SLH(1, gv_f, H_s)
-            G_cat = G1 ⊞ G2
-            G_fb = feedback(G_cat, 2, 1)
-            @test eltype(jump_operator(G_fb)) <: FunctionWrapper
-            @test typeof(hamiltonian(G_fb)) <: FunctionWrapper
-        end
     end
 end
