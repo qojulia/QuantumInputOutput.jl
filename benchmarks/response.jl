@@ -18,8 +18,16 @@ function benchmark_response!(SUITE)
 
     SUITE["Response"]["prepare"] =
         @benchmarkable frequency_response($network, $basis, $ρ; parameter = $parameter)
+    SUITE["Response"]["S11 single prepared"] = @benchmarkable scattering_parameter($response, 0.1)
     SUITE["Response"]["S11 sweep prepared"] =
         @benchmarkable scattering_parameter($response, $omega)
+    SUITE["Response"]["S11 sweep one-shot"] = @benchmarkable scattering_parameter(
+        $network,
+        $basis,
+        $ρ,
+        $omega;
+        parameter = $parameter,
+    )
     SUITE["Response"]["full Bogoliubov sweep prepared"] =
         @benchmarkable scattering_response($response, $omega)
     SUITE["Response"]["emission sweep prepared"] =
