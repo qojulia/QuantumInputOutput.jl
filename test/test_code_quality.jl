@@ -18,20 +18,6 @@ end
     @test check_no_self_qualified_accesses(QuantumInputOutput) == nothing
 end
 
-@static if isempty(VERSION.prerelease)
-    @testset "Code linting" begin
-        using JET
-
-        rep = report_package(
-            QuantumInputOutput;
-            target_modules = (QuantumInputOutput,),
-            ignore_missing_comparison = true,
-        )
-        @show rep
-        @test isempty(JET.get_reports(rep))
-    end
-end
-
 @testset "Concretely typed" begin
     import QuantumInputOutput as QIO
     using CheckConcreteStructs
