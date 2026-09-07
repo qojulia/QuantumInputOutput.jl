@@ -235,7 +235,8 @@ using Test
         L1 = to_numeric(√(κ1) * a, b; parameter = p1)
         expected = L1 + 2.0 * identityoperator(b)
         @test Matrix(output_field(R1, 1; input = 2.0).data) ≈ Matrix(expected.data)
-        @test Matrix(to_numeric(output_field(Gone, 1; input = 2.0), b; parameter = p1).data) ≈
-              Matrix(expected.data)
+        @test Matrix(
+            to_numeric(output_field(Gone, 1; input = 2.0), b; parameter = p1).data,
+        ) ≈ Matrix(expected.data)
     end
 end
