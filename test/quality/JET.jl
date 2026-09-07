@@ -28,7 +28,12 @@ using Test
 
         JET.@test_opt target_modules = (QuantumInputOutput,) scattering_parameter(R, 0.1)
         JET.@test_opt target_modules = (QuantumInputOutput,) scattering_response(R, 0.1)
-        JET.@test_opt target_modules = (QuantumInputOutput,) susceptibility(R, a_num, adag_num, 0.1)
+        JET.@test_opt target_modules = (QuantumInputOutput,) susceptibility(
+            R,
+            a_num,
+            adag_num,
+            0.1,
+        )
         JET.@test_opt target_modules = (QuantumInputOutput,) emission_spectrum(R, 0.1)
         JET.@test_opt target_modules = (QuantumInputOutput,) quadrature_spectrum(
             R,
