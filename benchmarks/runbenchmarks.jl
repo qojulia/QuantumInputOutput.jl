@@ -33,12 +33,35 @@ benchmark_response!(SUITE)
 
 BenchmarkTools.tune!(SUITE)
 results = BenchmarkTools.run(SUITE; verbose = true)
+estimates = minimum(results)
 
 # Report the minimum rather than the median. The minimum is BenchmarkTools'
 # recommended estimator for tracking: measurement noise (GC pauses, scheduler
 # preemption, frequency scaling) is strictly additive, so the minimum is the
 # most reproducible estimate of the underlying cost and the least sensitive to
 # cross-runner variance.
-display(minimum(results))
+display(estimates)
 
-BenchmarkTools.save("benchmarks_output.json", minimum(results))
+# The benchmark action's PR summary reports time but omits BenchmarkTools'
+# memory/allocation counters. Print the response subgroup explicitly so the
+# prepared-vs-legacy hot-path comparison remains auditable on PR runs where
+# benchmark data is intentionally not pushed to gh-pages.
+if haskey(estimates, "Response")
+    println("Response benchmark resource summary:")
+    response = estimates["Response"]
+    for name in sort!(collect(keys(response)))
+        estimate = response[name]
+        println(
+            "  ",
+            name,
+            ": time=",
+            estimate.time,
+            " ns, memory=",
+            estimate.memory,
+            " bytes, allocs=",
+            estimate.allocs,
+        )
+    end
+end
+
+BenchmarkTools.save("benchmarks_output.json", estimates)
