@@ -95,7 +95,10 @@ function _write_report(io)
 
     println(io)
     if isempty(regressions)
-        println(io, "**Result: pass.** No common benchmark exceeded the paired regression threshold.")
+        println(
+            io,
+            "**Result: pass.** No common benchmark exceeded the paired regression threshold.",
+        )
     else
         println(io, "**Result: fail.** Regressions above ", alert_ratio, "x:")
         for key in regressions
