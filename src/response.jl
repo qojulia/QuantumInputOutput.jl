@@ -147,10 +147,7 @@ end
 
 function _numeric_scattering(G::SLH{N}, parameter, ρ_ss) where {N}
     S = scattering(G)
-    values = ntuple(
-        k -> _response_parameter_value(S[k], parameter, ρ_ss),
-        Val(N * N),
-    )
+    values = ntuple(k -> _response_parameter_value(S[k], parameter, ρ_ss), Val(N * N))
     return SMatrix{N,N,ComplexF64}(values)
 end
 
