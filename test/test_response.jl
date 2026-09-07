@@ -99,11 +99,8 @@ using Test
 
         # QIO beam splitters also commonly use ordinary real symbolic sin/cos entries.
         angle = 0.23
-        Grotation = SLH(
-            [cos(ϕ) -sin(ϕ); sin(ϕ) cos(ϕ)],
-            [√(κ1) * a, √(κ2) * a],
-            -Δ * a' * a,
-        )
+        Grotation =
+            SLH([cos(ϕ) -sin(ϕ); sin(ϕ) cos(ϕ)], [√(κ1) * a, √(κ2) * a], -Δ * a' * a)
         pr = Dict(Δ => 0.0, κ1 => 0.4, κ2 => 0.6, ϕ => angle)
         ρr = steady(Grotation, pr)
         Rr = frequency_response(Grotation, b, ρr; parameter = pr)
