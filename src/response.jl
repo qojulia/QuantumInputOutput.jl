@@ -157,6 +157,12 @@ end
 
 _operator_matrix(A::QuantumOpticsBase.AbstractOperator) = Matrix(A.data)
 
+function _check_response_basis(reference, A)
+    reference.basis_l == A.basis_l && reference.basis_r == A.basis_r ||
+        throw(ArgumentError("response operator basis is incompatible with the prepared model"))
+    return nothing
+end
+
 function _trace_weights(A::AbstractMatrix)
     return vec(Matrix(transpose(A)))
 end
@@ -312,7 +318,7 @@ function frequency_response(
         throw(ArgumentError("frequency response requires a time-independent Hamiltonian"))
     all(Jk -> Jk isa QuantumOpticsBase.AbstractOperator, J) ||
         throw(ArgumentError("frequency response requires time-independent jump operators"))
-    QuantumOpticsBase.check_samebases(H, ρ_ss)
+    _check_response_basis(H, ρ_ss)
 
     S = _numeric_scattering(G, parameter_, ρ_ss)
     ρmat = _operator_matrix(ρ_ss)
@@ -400,7 +406,7 @@ function _numeric_response_operator(
     R::FrequencyResponse,
     A::QuantumOpticsBase.AbstractOperator,
 )
-    QuantumOpticsBase.check_samebases(R.hamiltonian, A)
+    _check_response_basis(R.hamiltonian, A)
     return A
 end
 
