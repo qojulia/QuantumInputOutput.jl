@@ -158,8 +158,9 @@ end
 _operator_matrix(A::QuantumOpticsBase.AbstractOperator) = Matrix(A.data)
 
 function _check_response_basis(reference, A)
-    reference.basis_l == A.basis_l && reference.basis_r == A.basis_r ||
-        throw(ArgumentError("response operator basis is incompatible with the prepared model"))
+    reference.basis_l == A.basis_l && reference.basis_r == A.basis_r || throw(
+        ArgumentError("response operator basis is incompatible with the prepared model"),
+    )
     return nothing
 end
 
