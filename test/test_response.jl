@@ -88,10 +88,17 @@ using Test
         @test scattering_parameter(R1, 0.0) ≈ -1 atol = 1e-8
 
         phase = 0.37
-        Gphase = SLH(exp(im * ϕ), √(κ1) * a, -Δ * a' * a)
+        Gphase = SLH(
+            SecondQuantizedAlgebra.expim(ϕ),
+            √(κ1) * a,
+            -Δ * a' * a,
+        )
+        @test scattering(Gphase)[1, 1] isa SecondQuantizedAlgebra.Coeff
+
         pp = Dict(Δ => 0.0, κ1 => κ_, ϕ => phase)
         ρp = steady(Gphase, pp)
         Rp = frequency_response(Gphase, b, ρp; parameter = pp)
+        @test eltype(Rp.scattering) === ComplexF64
         @test scattering_parameter(Rp, 0.0) ≈ -exp(im * phase) atol = 1e-8
     end
 
