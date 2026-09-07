@@ -36,23 +36,64 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.draft }}
     steps:
-      - uses: actions/checkout@v7
+      # On pull requests the default checkout is GitHub's synthetic merge commit,
+      # i.e. the code that would actually land on the exact current base. Benchmark
+      # that target and the exact base SHA in the same job to remove cross-runner
+      # variance from the regression gate.
+      - name: Check out target
+        uses: actions/checkout@v7
+
+      - name: Check out pull request base
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: _benchmark_base
+
       - uses: julia-actions/setup-julia@v3
         with:
-          version: '1.12' # should run on same julia version 
+          version: '1.12'
           arch: x64
       - uses: julia-actions/cache@v3
-      - name: Run benchmark
+
+      - name: Run base benchmark
+        if: ${{ github.event_name == 'pull_request' }}
+        working-directory: _benchmark_base/benchmarks
         run: |
-          cd benchmarks
           julia --project --threads=1 --gcthreads=1 --color=yes -e '
             using Pkg;
             Pkg.develop(PackageSpec(path=joinpath(pwd(), "..")));
             Pkg.instantiate();
             include("runbenchmarks.jl")'
 
-      # this will update benchmarks/data.js in gh-pages branch
+      - name: Run target benchmark
+        working-directory: benchmarks
+        run: |
+          julia --project --threads=1 --gcthreads=1 --color=yes -e '
+            using Pkg;
+            Pkg.develop(PackageSpec(path=joinpath(pwd(), "..")));
+            Pkg.instantiate();
+            include("runbenchmarks.jl")'
+
+      # The old workflow compared PR timing against a historical gh-pages run,
+      # which mixed dependency and hosted-runner drift into the merge gate. Keep
+      # the same effective 30% alert/failure threshold, but apply it to paired
+      # measurements from this job. New benchmark leaves are reported without
+      # failing because no base measurement exists yet.
+      - name: Compare base and target
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          julia --project=benchmarks --threads=1 --gcthreads=1 --color=yes \
+            benchmarks/compare_benchmarks.jl \
+            _benchmark_base/benchmarks/benchmarks_output.json \
+            benchmarks/benchmarks_output.json \
+            1.30
+
+      # Historical charts remain useful on main, where each accepted commit is
+      # intentionally recorded. PR gating no longer depends on this historical
+      # data, so a slow hosted runner cannot create a false regression failure.
       - name: Parse & Upload Benchmark Results
+        if: ${{ github.event_name != 'pull_request' }}
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Benchmark Results
@@ -67,4 +108,4 @@ jobs:
           fail-on-alert: true
           benchmark-data-dir-path: benchmarks
           max-items-in-chart: 100
-          auto-push: ${{ github.event_name != 'pull_request' }}
+          auto-push: true
