@@ -74,15 +74,8 @@ using Test
         @test maximum(abs.(full.anomalous)) < 1e-10
 
         # Prepared and one-shot interfaces are equivalent.
-        one_shot = scattering_parameter(
-            Glin,
-            b,
-            ρ,
-            ω;
-            parameter = p,
-            in_port = 1,
-            out_port = 2,
-        )
+        one_shot =
+            scattering_parameter(Glin, b, ρ, ω; parameter = p, in_port = 1, out_port = 2)
         @test one_shot ≈ S21
     end
 
@@ -132,9 +125,12 @@ using Test
             response = scattering_response(R, w)
             @test response.normal[1, 1] ≈ expected.normal rtol = 2e-4 atol = 2e-6
             @test response.anomalous[1, 1] ≈ expected.anomalous rtol = 2e-4 atol = 2e-6
-            @test scattering_parameter(R, w; component = :normal) ≈ expected.normal rtol = 2e-4
-            @test scattering_parameter(R, w; component = :anomalous) ≈ expected.anomalous rtol = 2e-4
-            @test abs2(response.normal[1, 1]) - abs2(response.anomalous[1, 1]) ≈ 1 rtol = 5e-4
+            @test scattering_parameter(R, w; component = :normal) ≈ expected.normal rtol =
+                2e-4
+            @test scattering_parameter(R, w; component = :anomalous) ≈ expected.anomalous rtol =
+                2e-4
+            @test abs2(response.normal[1, 1]) - abs2(response.anomalous[1, 1]) ≈ 1 rtol =
+                5e-4
         end
 
         ω = [-1.0, 0.0, 1.0]
