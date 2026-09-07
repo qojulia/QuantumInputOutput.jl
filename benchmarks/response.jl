@@ -15,16 +15,14 @@ function _legacy_response_resolvent(H, J, ρ)
 end
 
 function _legacy_response_solve(R::_LegacyResponseResolvent, μ::Number, rhs)
-    x = (R.factorization + μ * LinearAlgebra.I) \
-        reshape(Matrix(rhs.data), R.d * R.d)
+    x = (R.factorization + μ * LinearAlgebra.I) \ reshape(Matrix(rhs.data), R.d * R.d)
     return QuantumOpticsBase.Operator(R.basis, R.basis, reshape(x, R.d, R.d))
 end
 
 function _legacy_scattering_sweep(R::_LegacyResponseResolvent, Lout, rhs, direct, omega)
     return [
-        direct +
-        LinearAlgebra.tr(Lout.data * _legacy_response_solve(R, im * ω, rhs).data) for
-        ω in omega
+        direct + LinearAlgebra.tr(Lout.data * _legacy_response_solve(R, im * ω, rhs).data)
+        for ω in omega
     ]
 end
 
