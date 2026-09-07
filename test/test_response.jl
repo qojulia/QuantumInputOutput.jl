@@ -157,6 +157,31 @@ using Test
         @test maximum(anti) > 1
 
         emission = emission_spectrum(R, ω)
+        analytic_emission(w) = abs2(analytic(w).anomalous)
+        @test all(isapprox.(emission, analytic_emission.(ω); rtol = 5e-4, atol = 1e-5))
         @test all(emission .>= -1e-10)
+    end
+
+    @testset "nonlinear Kerr parametric oscillator" begin
+        bk = FockBasis(10)
+        Hkpo = -0.15 * a' * a + 0.04 * a' * a' * a * a + 0.06 * (a' * a' + a * a)
+        Gkpo = SLH(1, a, Hkpo)
+        Hn, Jn = to_numeric(Gkpo, bk)
+        ρ = steadystate.eigenvector(Hn, collect(Jn))
+        R = frequency_response(Gkpo, bk, ρ)
+        ω = [-0.4, 0.0, 0.4]
+
+        response = scattering_response(R, ω)
+        @test all(isfinite, abs.(response.normal))
+        @test all(isfinite, abs.(response.anomalous))
+        @test scattering_parameter(R, ω) ≈ collect(response.normal[1, 1, :])
+        @test scattering_parameter(Gkpo, bk, ρ, ω) ≈ collect(response.normal[1, 1, :])
+
+        χ = susceptibility(R, a, a', ω)
+        @test all(isfinite, abs.(χ))
+
+        emission = emission_spectrum(R, ω)
+        @test all(isfinite, emission)
+        @test all(emission .>= -1e-9)
     end
 end
