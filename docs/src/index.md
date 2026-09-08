@@ -12,7 +12,7 @@ hero:
       link: tutorial.md
     - theme: alt
       text: Theory
-      link: theory.md
+      link: theory/input_output.md
     - theme: alt
       text: View on GitHub
       link: https://github.com/qojulia/QuantumInputOutput.jl
@@ -84,4 +84,4 @@ The symbolic model can be translated to numerical operators for full Hilbert-spa
 
 Two-time field correlations provide a temporal-mode decomposition of the outgoing radiation. Dominant output modes can then be treated as explicit quantum subsystems for state and observable calculations.
 
-See the [Theory](theory.md) for the underlying input-output and virtual-cavity formalism, [Implementation](implementation.md) for the symbolic-to-numeric pipeline, [Reference](api.md) for the API, and [Relevant Literature](literature.md) for the foundational papers.
+Use the [Manual](manual/slh.md) for the package workflow and public interface, [Theory](theory/input_output.md) for the underlying input-output and virtual-cavity formalism, and [Relevant Literature](literature.md) for the foundational papers.
