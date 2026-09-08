@@ -9,19 +9,25 @@ _as_time_function(x) = x  # anything callable passes through
 
 """
     coupling_matrix(gs::Tuple)
+    coupling_matrix(g1, g2, gs...)
 
-Build the antisymmetric coupling coefficient matrix `A(t)` from a tuple of
-coupling functions/constants `gs = (g_1, ..., g_N)`. Returns a closure `t -> A(t)`.
+Construct the anti-Hermitian coefficient matrix `A(t)` that generates the passive
+interaction-picture mixing of a cascade of virtual modes. The couplings must be supplied
+in physical cascade order and may be constants or callables `gᵢ(t)`.
 
 ```math
-A_{ij}(t) = \\frac{1}{2} \\begin{cases}
-0 & i = j \\\\
-g_i(t)\\, g_j^*(t) & i < j \\\\
--g_j^*(t)\\, g_i(t) & i > j
-\\end{cases}
+A_{ij}(t) = \frac{1}{2}
+\begin{cases}
+0, & i=j, \\
+g_i(t)g_j^*(t), & i<j, \\
+-g_j^*(t)g_i(t), & i>j.
+\end{cases}
 ```
 
-so that `A(t)` is anti-Hermitian. All couplings may be time-dependent or constant.
+Returns a closure `t -> A(t)` whose value is an `N × N` static `ComplexF64` matrix.
+Because `A(t)' == -A(t)`, the solution of `dM/dt = A(t)M(t)` is unitary.
+
+See also [`solve_mode_evolution`](@ref) and [Interaction-picture formulation](@ref).
 """
 function coupling_matrix(gs::Tuple{Vararg{Any,N}}) where {N}
     gfs = map(_as_time_function, gs)
@@ -57,10 +63,18 @@ coupling_matrix(g1, g2, gs...) = coupling_matrix((g1, g2, gs...))
 """
     solve_mode_evolution(A::Function, T; alg=Tsit5(), kwargs...)
 
-Solve the interaction-picture coefficient-matrix ODE `dM/dt = A(t) M(t)` with `M(0) = I`.
-Returns the ODE solution directly (callable as `sol(t)`).
+Solve the interaction-picture matrix equation
 
-All kwargs are passed on to the ODE solver.
+```math
+\dot M(t)=A(t)M(t), \qquad M(T[1])=I,
+```
+
+and save the solution on the grid `T`. The matrix size is inferred from `A(T[1])`.
+`A` is normally constructed with [`coupling_matrix`](@ref).
+
+Returns the OrdinaryDiffEq solution directly, so `sol(t)` evaluates the mode-transformation
+matrix at arbitrary times supported by the solver interpolation. `alg` selects the ODE
+algorithm and all remaining keyword arguments are forwarded to `solve`.
 """
 function solve_mode_evolution(A::Function, T; alg = Tsit5(), kwargs...)
     T0 = T[1]
@@ -78,21 +92,30 @@ end
 """
     solve_mode_evolution_symmetric(u, T)
 
-Analytic interaction-picture coefficient matrix for two modes when `u(t) = v(t)`.
-Returns a callable `t -> M(t)` where
+Return the analytic two-mode interaction-picture rotation for a source and receiver built
+from the same normalized temporal envelope `u`. `u` may be a callable or values sampled on
+`T`.
+
+With
 
 ```math
-M(t) = \\begin{bmatrix}
-\\cos \\theta(t) & -\\sin \\theta(t) \\\\
-\\sin \\theta(t) & \\cos \\theta(t)
-\\end{bmatrix},
+F(t)=\int_{T[1]}^t |u(t')|^2\,dt', \qquad \sin^2\theta(t)=F(t),
 ```
 
-where
+the returned callable evaluates
 
 ```math
-\\sin^2 \\theta(t) = \\int_0^t |u(t')|^2\\,dt'.
+M(t)=\begin{bmatrix}
+\cos\theta(t) & -\sin\theta(t) \\
+\sin\theta(t) & \cos\theta(t)
+\end{bmatrix}.
 ```
+
+The accumulated norm is clamped to `[0, 1]` before evaluating the angle, which suppresses
+small numerical excursions outside the physical interval. Matrix elements are linearly
+interpolated over `T` and extrapolated using the boundary extension.
+
+See also [`solve_mode_evolution`](@ref).
 """
 function solve_mode_evolution_symmetric(u, T)
     u_vals = u isa Function ? u.(T) : u
