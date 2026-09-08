@@ -16,6 +16,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/qojulia/QuantumInputOutput.jl
+  image:
+    src: /assets/logo.svg
+    alt: QuantumInputOutput.jl Gaussian-pulse logo
 
 features:
   - icon: ⇢
