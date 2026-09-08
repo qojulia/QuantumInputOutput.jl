@@ -11,26 +11,21 @@ The theory behind the construction is given in [Quantum pulses and input-output 
 
 ## Single input and output modes
 
-A temporal mode can be supplied as sampled data or as a function evaluated on a time grid. For Gaussian wave packets, `Gaussian` provides an analytic route that avoids numerical integration of the mode envelope.
+A temporal mode can be supplied as sampled data or as a function evaluated on a time grid. Gaussian wave packets also have an analytic representation.
 
 ```@docs
 Gaussian
-```
-
-The coupling returned by the pulse constructors is a callable wrapper designed to be used directly as a time-dependent scalar parameter during numerical translation.
-
-```@docs
 PulseCoupling
 ```
 
-Use an input coupling for a virtual cavity placed upstream of the physical system and an output coupling for a virtual cavity placed downstream. The two constructions are directional: the first releases an initially occupied auxiliary mode into the field, while the second captures a prescribed outgoing temporal mode.
+Place a virtual source cavity upstream of the physical system and a virtual receiver cavity downstream.
 
 ```@docs
 coupling_input
 coupling_output
 ```
 
-A typical symbolic model therefore contains scalar parameters such as `g_u` and `g_v`, while their numerical values are supplied only at translation time:
+A typical symbolic model contains scalar coupling parameters whose time dependence is supplied only when the model is translated:
 
 ```julia
 G_u = SLH(1, g_u * a_u, 0)
@@ -38,23 +33,21 @@ G_s = SLH(1, L_s, H_s)
 G_v = SLH(1, g_v * a_v, 0)
 G = G_u ▷ G_s ▷ G_v
 
-T = range(0, 12; length = 4001)
+T = collect(range(0, 12; length = 4001))
 gu = coupling_input(Gaussian(4.0, 1.0))
-gv = coupling_output(v, collect(T))
+gv = coupling_output(v, T)
 ```
 
 ## Several selected modes
 
-Virtual cavities themselves scatter the fields seen by later cavities. Consequently, when several input or output modes are represented explicitly, the nominal temporal modes cannot in general be coupled independently. The effective-mode helpers account for that distortion before the corresponding coupling is constructed.
-
-The ordering of the mode collection is physical. For inputs it follows the sequence of virtual input cavities before the system; for outputs it follows the sequence of virtual output cavities after the system.
+Several explicit virtual cavities alter the fields seen by one another. Their ordering therefore carries physical information: input modes follow the source-cavity cascade before the system, while output modes follow the receiver-cavity cascade after it.
 
 ```@docs
 effective_input_mode
 effective_output_mode
 ```
 
-The usual pattern is to determine the effective mode first and then construct its coupling:
+The corrected mode is used to construct the corresponding single-mode coupling:
 
 ```julia
 u2_eff = effective_input_mode(u_modes, T, 2)
@@ -66,11 +59,11 @@ gv2 = coupling_output(v2_eff, T)
 
 ## Propagation delays
 
-A finite delay can also be represented by a virtual cavity. During a short delay the auxiliary mode may need to absorb one envelope while simultaneously emitting another, so the ordinary source or receiver coupling is not sufficient. `coupling_delay_in` and `coupling_delay_out` construct the two couplings for that case.
+A short delay can require a virtual cavity to absorb one envelope while emitting another at the same time.
 
 ```@docs
 coupling_delay_in
 coupling_delay_out
 ```
 
-The delay construction is discussed in [Quantum pulses and input-output theory](@ref) and follows the finite-propagation treatment of [Christiansen2026](@cite). See [Pulse delay](@ref) in the examples for a complete network.
+The delay construction follows [Christiansen2026](@cite) and is derived in [Quantum pulses and input-output theory](@ref). See the [pulse-delay example](../examples/08-1_pulse-delay__simple.md) for a complete network.
