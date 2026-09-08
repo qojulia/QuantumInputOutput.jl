@@ -171,7 +171,7 @@ G_{\mathrm{BS}}
 \left(
 \begin{bmatrix}
 r_{11} & t_{12}\\
-t_{21} & r_{22}
+-t_{21} & r_{22}
 \end{bmatrix},
 0,
 0
