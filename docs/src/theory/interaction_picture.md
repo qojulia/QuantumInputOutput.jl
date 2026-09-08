@@ -81,4 +81,4 @@ ordinary picture:       state carries pulse transfer
 interaction picture:    basis carries pulse transfer
 ```
 
-The interaction picture is therefore an optional computational representation layered on top of the virtual-cavity input-output formalism, not a different physical model. The practical construction is summarized in the [Interaction picture](@ref) manual page.
+The interaction picture is therefore an optional computational representation layered on top of the virtual-cavity input-output formalism, not a different physical model. The practical construction is summarized in the [Interaction picture manual](../manual/interaction_picture.md).
