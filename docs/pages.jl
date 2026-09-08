@@ -1,0 +1,41 @@
+pages = [
+    "Home" => "index.md",
+    "Manual" => [
+        "Tutorial" => "tutorial.md",
+        "Theory" => "theory.md",
+        "Implementation" => "implementation.md",
+    ],
+    "Reference" => "api.md",
+    "Literature" => "literature.md",
+    "Examples" => [
+        "Cavity scattering" =>
+            "examples/01-1_cavity-scattering__PRL2019_123-123604_fig2-fig3.md",
+        "Stimulated emission" =>
+            "examples/01-2_stimulated-emission__PRL2019_123-123604_fig4.md",
+        "Cavity phase noise" =>
+            "examples/02-1_cavity-phase-noise__PRA2020_102- 023717_fig2.md",
+        "Mode entanglement" =>
+            "examples/02-3_mode-entanglement__PRA2020_102-023717_fig4.md",
+        "Beam combiner" =>
+            "examples/03-1_beam-combiner__PRA2023_107-023715_fig2-fig3.md",
+        "Two-sided cavity with coherent drive" =>
+            "examples/04-1_two-sided-cavity_with-atom_coh-drive.md",
+        "Two-sided cavity with cumulants" =>
+            "examples/04-2_two-sided-cavity_with-atom_coh-drive__cumulants.md",
+        "Bidirectional waveguide with coherent pulse" =>
+            "examples/05-1_N-QDs_bidirectional-waveguide_coherent-pulse.md",
+        "Bidirectional waveguide with quantum pulse" =>
+            "examples/05-2_N-QDs_bidirectional-waveguide_quantum-pulse_qo.md",
+        "Feedback reduction" =>
+            "examples/05-3_N-QDs_bidirectional-waveguide_feedback-reduction.md",
+        "Interaction picture" =>
+            "examples/06-1_interaction-picture__PRA2023_107-013706_fig2.md",
+        "Beam splitter loss" => "examples/07-1_beamsplitter_loss__quantum-pulse.md",
+        "Hong-Ou-Mandel interference" =>
+            "examples/07-2_hong-ou-mandel__quantum-pulse.md",
+        "Pulse delay" => "examples/08-1_pulse-delay__simple.md",
+        "Coherent-feedback squeezing" =>
+            "examples/09-1_coherent-feedback-squeezing__Gough-Wildfeuer-2009.md",
+        "SUPER excitation" => "examples/10-1_SUPER_excitation.md",
+    ],
+]
