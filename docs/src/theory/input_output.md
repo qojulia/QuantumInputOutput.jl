@@ -333,15 +333,23 @@ The natural temporal modes therefore satisfy
 
 This orientation makes the eigenvectors of the returned matrix directly proportional to the temporal mode functions ``v_k(t)`` rather than their complex conjugates.
 
-On a uniform sampled grid, [`correlation_matrix`](@ref) returns ``K`` without quadrature weights. If ``\lambda_k`` is a matrix eigenvalue and ``\Delta t`` is the grid spacing, then
+For samples ``T_j`` with positive quadrature weights ``w_j``, let ``W=\operatorname{diag}(w_j)``. The discrete integral eigenproblem is converted to the ordinary Hermitian eigenproblem
+
+```math
+W^{1/2} K W^{1/2} y_k = n_k y_k,
+\qquad
+v_k = W^{-1/2} y_k.
+```
+
+Thus the eigenvalues of the weighted kernel are the mode occupations directly and the recovered samples satisfy the chosen discrete normalization. For the rectangular rule on a uniform grid, ``W=\Delta t\,I``; if ``\lambda_k`` and ``V_k`` are eigenpairs of the unweighted sampled matrix, this reduces to
 
 ```math
 n_k\approx\lambda_k\Delta t,
 \qquad
-v_k(t_j)\approx\frac{V_{jk}}{\sqrt{\Delta t}},
+v_k(t_j)\approx\frac{V_{jk}}{\sqrt{\Delta t}}.
 ```
 
-where ``V_{jk}`` is the corresponding normalized matrix eigenvector. For nonuniform grids the quadrature weights must instead be included in the discrete integral eigenproblem; see [Output modes](@ref). A selected ``v_k`` can then be promoted back into the model through a virtual receiver cavity. This gives the closed workflow
+Other rules, including trapezoidal quadrature, use their actual weights. The practical construction is shown in [Output modes](@ref). A selected ``v_k`` can then be promoted back into the model through a virtual receiver cavity. This gives the closed workflow
 
 ```text
 quantum mode in → network → continuous output → temporal-mode decomposition → quantum mode out.
