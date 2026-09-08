@@ -21,6 +21,7 @@ The components of a composed model remain accessible independently.
 scattering
 jump_operator
 hamiltonian
+lindblad
 ```
 
 ## Composition
@@ -49,5 +50,7 @@ For symbolic models, translation is normally the boundary between model construc
 ```@docs
 to_numeric
 ```
+
+The symbolic and numerical Hilbert spaces do not have to be identical. Operator substitutions forwarded through `to_numeric(...; operators=...)` can map selected symbolic operators onto a reduced numerical basis—for example when an auxiliary output cavity was useful in the symbolic derivation but is intentionally omitted from a particular solve.
 
 QuantumInputOutput does not prescribe the subsequent solver. Full Hilbert-space dynamics can be evolved with QuantumOptics.jl, while the symbolic Hamiltonian and jump operators can also be passed to moment-based tools such as QuantumCumulants.jl. The complete full-Hilbert-space workflow is shown in the [Tutorial](@ref).
