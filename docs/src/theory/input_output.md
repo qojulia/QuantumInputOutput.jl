@@ -9,19 +9,27 @@ QuantumInputOutput combines two complementary descriptions of light: localized q
 
 ## Continuous input and output fields
 
-For a Markovian one-dimensional bosonic channel, the input field satisfies
+For a Markovian bosonic channel, the input field satisfies
 
 ```math
-[b_{\mathrm{in}}(t),b_{\mathrm{in}}^\dagger(t')]=\delta(t-t').
+[b_{\mathrm{in},i}(t),b_{\mathrm{in},j}^\dagger(t')]
+=\delta_{ij}\delta(t-t').
 ```
 
-A localized system with Hamiltonian ``H_s`` and coupling operator ``L_s`` obeys the input-output relation
+An SLH component ``G=(S,L,H)`` relates the incoming and outgoing fields by
 
 ```math
-b_{\mathrm{out}}(t)=b_{\mathrm{in}}(t)+L_s(t),
+\boldsymbol b_{\mathrm{out}}(t)
+=S\,\boldsymbol b_{\mathrm{in}}(t)+\boldsymbol L(t).
 ```
 
-up to the scattering matrix and phase conventions of the chosen channel. For ``L_s=\sqrt{\gamma}\,c``, the corresponding interaction is conventionally written
+For a single channel with ``S=1`` and ``L=\sqrt{\gamma}\,c``, this reduces to
+
+```math
+b_{\mathrm{out}}(t)=b_{\mathrm{in}}(t)+\sqrt{\gamma}\,c(t),
+```
+
+with the conventional interaction
 
 ```math
 V_{SB}(t)=i\sqrt{\gamma}\left(c\,b_{\mathrm{in}}^\dagger(t)-c^\dagger b_{\mathrm{in}}(t)\right).
@@ -82,7 +90,7 @@ where ``S`` is the channel scattering matrix, ``L`` is the vector of couplings t
 If ``G_1`` is upstream of ``G_2``, the series product used by `G₁ ▷ G₂` is
 
 ```math
-G_1\triangleleft G_2
+G_1\triangleright G_2
 =
 \left(
 S_2S_1,
