@@ -296,7 +296,7 @@ This finite auxiliary evolution is the multimode extension of the virtual-cavity
 
 ## Discovering output modes
 
-For an unknown outgoing field, a natural temporal basis is obtained from its first-order correlation kernel,
+The conventional first-order correlation kernel of the emitted field is
 
 ```math
 g^{(1)}(t_1,t_2)
@@ -304,14 +304,7 @@ g^{(1)}(t_1,t_2)
 \langle L_s^\dagger(t_1)L_s(t_2)\rangle.
 ```
 
-Because this is a positive Hermitian kernel, its natural temporal modes solve
-
-```math
-\int dt_2\,g^{(1)}(t_1,t_2)v_k(t_2)
-=n_k v_k(t_1),
-```
-
-and provide the coherent-mode decomposition
+For a field occupying orthonormal temporal modes ``v_k``, it has the coherent-mode decomposition
 
 ```math
 g^{(1)}(t_1,t_2)
@@ -319,9 +312,28 @@ g^{(1)}(t_1,t_2)
 \sum_k n_k\,v_k^*(t_1)v_k(t_2),
 ```
 
-where the ``v_k`` are orthonormal temporal modes and ``n_k`` are their mean occupations. This decomposition identifies the field modes that are actually populated by the scattering process rather than imposing a basis in advance.
+where ``n_k`` is the mean occupation of mode ``k``. `correlation_matrix` stores the transposed Hermitian kernel
 
-On a uniform sampled grid, [`correlation_matrix`](@ref) returns the kernel without quadrature weights. If ``\lambda_k`` is a matrix eigenvalue and ``\Delta t`` is the grid spacing, then
+```math
+K(t_1,t_2)
+=
+g^{(1)}(t_2,t_1)
+=
+\langle L_s^\dagger(t_2)L_s(t_1)\rangle
+=
+\sum_k n_k\,v_k(t_1)v_k^*(t_2).
+```
+
+The natural temporal modes therefore satisfy
+
+```math
+\int dt_2\,K(t_1,t_2)v_k(t_2)
+=n_k v_k(t_1).
+```
+
+This orientation makes the eigenvectors of the returned matrix directly proportional to the temporal mode functions ``v_k(t)`` rather than their complex conjugates.
+
+On a uniform sampled grid, [`correlation_matrix`](@ref) returns ``K`` without quadrature weights. If ``\lambda_k`` is a matrix eigenvalue and ``\Delta t`` is the grid spacing, then
 
 ```math
 n_k\approx\lambda_k\Delta t,
