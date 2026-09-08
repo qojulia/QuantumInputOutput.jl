@@ -22,27 +22,29 @@ correlation_matrix
 
 ## Extracting temporal modes
 
-The continuous modes solve an integral eigenvalue problem, so quadrature weights matter when a sampled kernel is diagonalized. On a uniform grid with spacing ``\Delta t``, the weights are a common scalar: ordinary eigenvectors of the sampled matrix are therefore sufficient, the occupations are ``n_i \approx \lambda_i\Delta t``, and continuum-normalized mode samples are obtained by dividing the matrix eigenvectors by ``\sqrt{\Delta t}``.
+The continuous modes solve an integral eigenvalue problem, so a sampled kernel should be paired with the quadrature rule used to approximate that integral. Given positive quadrature weights ``w_j`` and ``W=\operatorname{diag}(w_j)``, diagonalize the Hermitian matrix ``W^{1/2} K W^{1/2}``. Its eigenvalues are the mode occupations directly, while the corresponding continuum-normalized mode samples are obtained by applying ``W^{-1/2}`` to its eigenvectors.
 
 ```julia
-G1 = correlation_matrix(T, ρt, H, J, Ls)
-F = eigen(G1)
+K = correlation_matrix(T, ρt, H, J, Ls)
 
+sqrtw = sqrt.(w)
+Kweighted = Hermitian(sqrtw .* Matrix(K) .* transpose(sqrtw))
+F = eigen(Kweighted)
+
+occupations = real.(F.values)
+v1 = F.vectors[:, end] ./ sqrtw
+```
+
+For the rectangular rule on a uniform grid, ``w_j=\Delta t`` for every sample. Then ``W`` is proportional to the identity, so the shortcut
+
+```julia
+F = eigen(K)
 Δt = T[2] - T[1]
 occupations = real.(F.values) .* Δt
 v1 = F.vectors[:, end] ./ sqrt(Δt)
 ```
 
-For a nonuniform grid, choose quadrature weights ``w_j`` and diagonalize the Hermitian weighted kernel ``W^{1/2}G^{(1)}W^{1/2}``. Its eigenvalues are the mode occupations directly, and a normalized sampled mode is recovered by multiplying the corresponding eigenvector by ``W^{-1/2}``.
-
-```julia
-sqrtw = sqrt.(w)
-Gweighted = Hermitian(sqrtw .* Matrix(G1) .* transpose(sqrtw))
-F = eigen(Gweighted)
-
-occupations = real.(F.values)
-v1 = F.vectors[:, end] ./ sqrtw
-```
+is equivalent. Other rules—including trapezoidal quadrature on a uniform grid—should use their actual weights in the weighted construction above.
 
 The eigenvectors are defined only up to an overall phase. If a later calculation depends on a particular phase convention, fix that phase explicitly before constructing the virtual-cavity coupling.
 
