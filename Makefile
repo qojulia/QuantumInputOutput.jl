@@ -1,4 +1,6 @@
 JULIA:=julia
+# Run four isolated Literate workers by default; override this on smaller machines.
+DOCUMENTER_LITERATE_WORKERS ?= 4
 
 default: help
 
@@ -9,6 +11,7 @@ format:
 	${JULIA} -e 'using JuliaFormatter; format(".")'
 
 servedocs:
+	DOCUMENTER_LITERATE_WORKERS=${DOCUMENTER_LITERATE_WORKERS} ${JULIA} --project=docs docs/make_md_examples.jl
 	${JULIA} --project=docs -e 'using LiveServer; LiveServer.servedocs()'
 
 test:
@@ -16,7 +19,7 @@ test:
 
 docs:
 	${JULIA} --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
-	${JULIA} --project=docs docs/make.jl
+	DOCUMENTER_LITERATE_WORKERS=${DOCUMENTER_LITERATE_WORKERS} ${JULIA} --project=docs docs/make.jl
 
 bench:
 	${JULIA} --project=benchmarks -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
