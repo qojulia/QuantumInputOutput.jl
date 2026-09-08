@@ -140,15 +140,19 @@ p = heatmap(
 p
 ```
 
-The dominant temporal output mode corresponds to the eigenvector with the largest eigenvalue. On this uniform grid, multiplying the matrix eigenvalues by `ΔT` gives the mean photon occupation of each temporal mode, while dividing an eigenvector by `sqrt(ΔT)` restores continuum normalization.
+To approximate the continuous integral eigenproblem, we include quadrature weights before diagonalization. Here we use trapezoidal weights on the uniform time grid. The eigenvalues of the weighted kernel are then the mode occupations directly, and applying the inverse square-root weights to an eigenvector gives the continuum-normalized mode samples.
 
 ```@example tutorial
-F = eigen(g1_m)
-ΔT = T[2] - T[1]
-n_avg = round.(real.(F.values)*ΔT; digits=3)
+w = fill(ΔT, length(T))
+w[1] *= 0.5
+w[end] *= 0.5
+sqrtw = sqrt.(w)
 
-modes = F.vectors
-v_mode = modes[:, end] / sqrt(ΔT)
+Kweighted = Hermitian(sqrtw .* Matrix(g1_m) .* transpose(sqrtw))
+F = eigen(Kweighted)
+n_avg = round.(real.(F.values); digits=3)
+
+v_mode = F.vectors[:, end] ./ sqrtw
 @show n_avg[end-1:end]
 nothing # hide
 ```
