@@ -328,7 +328,7 @@ end
     end
     expr = :(_mul(L1[1], L2[1]))
     for i = 2:N
-        expr = :(_add($expr, _mul(L1[i], L2[i])))
+        expr = :(_add($expr, _mul(L1[$i], L2[$i])))
     end
     return expr
 end
