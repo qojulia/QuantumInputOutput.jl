@@ -45,6 +45,8 @@ A useful modeling discipline is therefore to construct the physical network comp
 
 ## From a network to dynamics
 
+Symbolic construction is useful when the composed model must still be inspected, simplified, transformed, or reused by different backends. If none of those operations is needed, numerical QuantumOptics.jl operators and time-dependent callables can instead be placed directly in `SLH` objects, avoiding a separate symbolic-lowering step.
+
 For symbolic models, translation is normally the boundary between model construction and numerical evolution.
 
 ```@docs
