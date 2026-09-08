@@ -14,8 +14,7 @@ This closes the loop from a discrete input state to a traveling output field and
 
 ## Correlation kernel
 
-Choose the emitted field operator ``L_s(t)`` for the channel of interest and compute
-``g^{(1)}(t_1,t_2)`` from an already calculated trajectory. The operator-based overloads are preferable when the Hamiltonian and jump operators are already available numerically because the time-evolution problem can be reused more efficiently.
+The first-order correlation kernel is the bridge between the continuous output field and a discrete temporal-mode basis.
 
 ```@docs
 correlation_matrix
