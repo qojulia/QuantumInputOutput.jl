@@ -236,7 +236,7 @@ For output mode ``v_i``, the effect of the preceding receiver cavities can be re
 \dot\alpha_{v_i}^{(j)}(t)
 =
 -g_{v_j}(t)v_i^{(j-1)}(t)
-+\frac12|g_{v_j}(t)|^2\alpha_{v_i}^{(j)}(t),
+-\frac12|g_{v_j}(t)|^2\alpha_{v_i}^{(j)}(t),
 ```
 
 and updates
@@ -254,7 +254,7 @@ The effective mode seen by receiver ``i`` is then
 v_i^{\mathrm{eff}}(t)=v_i^{(i-1)}(t).
 ```
 
-For the source-cavity chain, starting from ``u_i^{(0)}(t)=u_i(t)``, the corresponding recursion is
+For the source-cavity chain, starting from ``u_i^{(0)}(t)=u_i(t)``, the corresponding backward recursion is
 
 ```math
 \dot\alpha_{u_i}^{(j)}(t)
@@ -292,7 +292,7 @@ g_{v_i}^{\mathrm{eff}}(t)
 {\sqrt{\int_{t_0}^{t}dt'\,|v_i^{\mathrm{eff}}(t')|^2}}.
 ```
 
-This finite auxiliary evolution is the multimode extension of the virtual-cavity construction [Kiilerich2020](@cite). [`effective_input_mode`](@ref) and [`effective_output_mode`](@ref) implement the corresponding numerical correction before the single-mode coupling constructors are applied.
+This finite auxiliary evolution is the multimode extension of the virtual-cavity construction [Kiilerich2020](@cite). The compact general input equation printed in that reference contains typographical sign/index errors; the backward recursion above follows its explicit two- and three-mode derivation. [`effective_input_mode`](@ref) and [`effective_output_mode`](@ref) expose the corresponding numerical construction.
 
 ## Discovering output modes
 
@@ -304,7 +304,14 @@ g^{(1)}(t_1,t_2)
 \langle L_s^\dagger(t_1)L_s(t_2)\rangle.
 ```
 
-Because this is a positive Hermitian kernel, it admits a coherent-mode decomposition
+Because this is a positive Hermitian kernel, its natural temporal modes solve
+
+```math
+\int dt_2\,g^{(1)}(t_1,t_2)v_k(t_2)
+=n_k v_k(t_1),
+```
+
+and provide the coherent-mode decomposition
 
 ```math
 g^{(1)}(t_1,t_2)
@@ -322,7 +329,7 @@ n_k\approx\lambda_k\Delta t,
 v_k(t_j)\approx\frac{V_{jk}}{\sqrt{\Delta t}},
 ```
 
-where ``V_{jk}`` is the corresponding normalized matrix eigenvector. A selected ``v_k`` can then be promoted back into the model through a virtual receiver cavity. This gives the closed workflow
+where ``V_{jk}`` is the corresponding normalized matrix eigenvector. For nonuniform grids the quadrature weights must instead be included in the discrete integral eigenproblem; see [Output modes](@ref). A selected ``v_k`` can then be promoted back into the model through a virtual receiver cavity. This gives the closed workflow
 
 ```text
 quantum mode in → network → continuous output → temporal-mode decomposition → quantum mode out.
@@ -330,7 +337,9 @@ quantum mode in → network → continuous output → temporal-mode decompositio
 
 ## Finite propagation delay
 
-A propagation delay can also be encoded by a virtual cavity instead of a spatial discretization of the field. Suppose the delay cavity simultaneously absorbs an envelope ``v(t)`` and emits ``u(t)``. Define
+A propagation delay can also be encoded by a virtual cavity instead of a spatial discretization of the field. For delays long compared with the pulse duration, capture and re-emission can occur as separated stages. Shorter delays require the delay cavity to absorb an incoming envelope while it is already emitting the delayed envelope.
+
+Suppose the delay cavity simultaneously absorbs ``v(t)`` and emits ``u(t)``. Define
 
 ```math
 D(t)=\int_{t_0}^{t}dt'\,\left(|v(t')|^2-|u(t')|^2\right).
@@ -344,4 +353,4 @@ Where ``D(t)>0``, the simultaneous couplings are
 \tilde g_{\mathrm{in}}(t)=-\frac{v^*(t)}{\sqrt{D(t)}}.
 ```
 
-The stored excitation accounts for the part of the pulse that has entered the delay line but has not yet left it. This finite-mode representation is useful when only relative pulse delays matter, including interferometric networks [Christiansen2026](@cite). The corresponding constructors are described in [Pulse modes](@ref).
+The stored excitation accounts for the part of the pulse that has entered the delay line but has not yet left it. In interferometric networks one may introduce a delay cavity for each path; only the relative delays normally affect the interference. This finite-mode representation avoids a spatial discretization of the propagating field [Christiansen2026](@cite). The corresponding constructors are described in [Pulse modes](@ref).
