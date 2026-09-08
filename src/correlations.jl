@@ -2,18 +2,32 @@
     correlation_matrix(T, ρt, f, Ls; kwargs...)
     correlation_matrix(T, ρt, H, J, Ls; kwargs...)
 
-Compute the two-time correlation matrix
-``g^{(1)}(t_1, t_2) = \\langle L_s^\\dagger(t_1) L_s(t_2) \\rangle``
-on the time grid `T`. Writes directly into output matrix.
+Compute the sampled first-order two-time correlation kernel
 
-Supply the dynamics either as a `master_dynamic`-style function `f(t, ρ)`, or as operators
-passed straight to the solver: a time-dependent `H` (e.g. the `TimeDependentSum` from
-[`to_numeric`](@ref)) with jump operators `J`, or a constant `H` with constant `J`. The
-operator form is much faster for time-dependent problems (the integrator is built once).
-`Ls` is either a constant operator or a function `Ls(t)` returning the operator at `t`.
+```math
+g^{(1)}(t_1,t_2) = \langle L_s^\dagger(t_1)L_s(t_2)\rangle
+```
 
-The returned matrix is a `Hermitian` wrapper. To extract the dominant temporal modes,
-diagonalize it with `eigen(g1_m)`. When only the leading modes are needed, te cheaper eigenvalue-range method can be used, e.g. `eigen(g1_m, (n-4):n)` for the five dominant modes, where `n = size(g1_m, 1)`.
+on the time grid `T` from a previously calculated trajectory `ρt`. `T` and `ρt` must
+have the same length. The result is returned as a newly allocated `Hermitian` matrix.
+
+The dynamics used for the quantum-regression propagations can be supplied in either form:
+
+- `f(t, ρ)`: a callback accepted by `QuantumOptics.timeevolution.master_dynamic`;
+- `H, J`: the numerical Hamiltonian and jump operators. `H` may be time dependent (for
+  example a `TimeDependentSum` returned by [`to_numeric`](@ref)) or constant. This form
+  avoids rebuilding the time-dependent problem for every starting time and is generally
+  preferable when the operators are already available.
+
+`Ls` is the emitted-field operator for the channel of interest. Pass either a constant
+operator or a function `Ls(t)` returning the concrete operator at time `t`. A
+`QuantumOpticsBase.AbstractTimeDependentOperator` must be wrapped as such a function.
+
+All keyword arguments are forwarded to the underlying time-evolution solver. Independent
+regression propagations are threaded over the first time index.
+
+Diagonalizing the returned kernel yields its sampled temporal modes. See [Output modes](@ref)
+for continuum normalization and occupation weights.
 """
 function correlation_matrix(T::Vector, ρt::Vector, f::Function, Ls; kwargs...)
     Ls_vec, Ls_dag_vec = _sample_operator_and_adjoint(T, Ls)
