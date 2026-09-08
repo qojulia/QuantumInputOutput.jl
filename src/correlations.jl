@@ -5,11 +5,17 @@
 Compute the sampled first-order two-time correlation kernel
 
 ```math
-g^{(1)}(t_1,t_2) = \langle L_s^\dagger(t_1)L_s(t_2)\rangle
+K(t_1,t_2) = \langle L_s^\dagger(t_2)L_s(t_1)\rangle
 ```
 
-on the time grid `T` from a previously calculated trajectory `ρt`. `T` and `ρt` must
-have the same length. The result is returned as a newly allocated `Hermitian` matrix.
+on the time grid `T` from a previously calculated trajectory `ρt`. Thus the returned matrix
+uses the transpose of the common convention
+``g^{(1)}(t_1,t_2)=\langle L_s^\dagger(t_1)L_s(t_2)\rangle``. This orientation makes the
+eigenvectors of `K` directly proportional to the sampled temporal mode functions rather
+than their complex conjugates.
+
+`T` and `ρt` must have the same length. The result is returned as a newly allocated
+`Hermitian` matrix.
 
 The dynamics used for the quantum-regression propagations can be supplied in either form:
 
