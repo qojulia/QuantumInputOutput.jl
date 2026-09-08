@@ -5,17 +5,17 @@ CollapsedDocStrings = true
 
 # SLH networks
 
-QuantumInputOutput represents a component by its scattering, coupling, and Hamiltonian data and keeps that representation compositional. The same network algebra can be used with symbolic operators from [SecondQuantizedAlgebra.jl](@extref SecondQuantizedAlgebra :doc:`index`) or with numerical QuantumOptics.jl operators; the distinction matters only when the finished model is handed to a numerical backend.
+QuantumInputOutput keeps the physical network and the numerical solver as separate concerns. Components are represented in SLH form and composed at that level; only the resulting model is translated to the representation used for dynamics. The same network algebra works with symbolic operators from [SecondQuantizedAlgebra.jl](@extref SecondQuantizedAlgebra :doc:`index`) and with numerical QuantumOptics.jl operators.
 
 ## Components
 
-An ``N``-port component has an ``N\times N`` scattering matrix, one coupling operator per port, and one Hamiltonian. Port order is part of the model: composition connects channels by their positions in these arrays.
+Port order is part of the network topology: channel positions determine which fields are connected by later composition operations.
 
 ```@docs
 SLH
 ```
 
-The three pieces remain directly accessible after composition. This is usually the point at which a symbolic network is inspected, transformed, or translated.
+The components of a composed model remain accessible independently.
 
 ```@docs
 scattering
@@ -23,40 +23,31 @@ jump_operator
 hamiltonian
 ```
 
-`lindblad` is retained only as a deprecated name for `jump_operator`.
-
-```@docs
-lindblad
-```
-
 ## Composition
 
-Network topology is written algebraically. Cascade connects equally sized channel sets in series; concatenation places independent components beside one another. The Unicode operators are convenient in equations, while the named forms are useful in ordinary code and accept the same variadic composition.
+Cascade describes propagation through successive components, while concatenation places independent channels beside one another. These operations keep the model in SLH form, so network structure can be changed without re-deriving a master equation.
 
 ```@docs
 ▷
 cascade
-```
-
-```@docs
 ⊞
 concatenate
 ```
 
-Internal coherent loops are eliminated at the SLH level. When several connections are supplied together, their port labels refer to the original unreduced component, so the network can be specified without manually renumbering ports after each reduction.
+Feedback closes internal coherent connections before numerical translation.
 
 ```@docs
 feedback
 ```
 
-A useful modeling discipline is therefore to build the physical network first and inspect only the final ``(S,L,H)`` triple. The intermediate algebra is an implementation of the network topology, not a sequence of master equations that has to be derived by hand.
+A useful modeling discipline is therefore to construct the physical network completely and inspect only the final ``(S,L,H)`` triple.
 
 ## From a network to dynamics
 
-For a symbolic model, numerical translation is best delayed until composition and feedback reduction are complete. `to_numeric` lowers the Hamiltonian and coupling operators onto a QuantumOptics.jl basis while preserving time-dependent parameters such as pulse couplings.
+For symbolic models, translation is normally the boundary between model construction and numerical evolution.
 
 ```@docs
 to_numeric
 ```
 
-QuantumInputOutput does not prescribe the subsequent solver. Full Hilbert-space dynamics can be evolved with QuantumOptics.jl, while the symbolic Hamiltonian and coupling operators can also be passed to moment-based tools such as QuantumCumulants.jl. The complete full-Hilbert-space workflow is shown in the [Tutorial](@ref).
+QuantumInputOutput does not prescribe the subsequent solver. Full Hilbert-space dynamics can be evolved with QuantumOptics.jl, while the symbolic Hamiltonian and jump operators can also be passed to moment-based tools such as QuantumCumulants.jl. The complete full-Hilbert-space workflow is shown in the [Tutorial](@ref).
