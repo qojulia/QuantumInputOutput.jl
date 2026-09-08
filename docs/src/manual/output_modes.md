@@ -22,7 +22,7 @@ correlation_matrix
 
 ## Extracting temporal modes
 
-Diagonalizing the Hermitian sampled kernel gives the natural temporal-mode basis. For a uniform grid with spacing ``\Delta t``, the discrete eigenvectors are converted to continuum-normalized modes by dividing by ``\sqrt{\Delta t}``, while the photon occupation associated with an eigenvalue ``\lambda_i`` is ``n_i \approx \lambda_i\Delta t``.
+The continuous modes solve an integral eigenvalue problem, so quadrature weights matter when a sampled kernel is diagonalized. On a uniform grid with spacing ``\Delta t``, the weights are a common scalar: ordinary eigenvectors of the sampled matrix are therefore sufficient, the occupations are ``n_i \approx \lambda_i\Delta t``, and continuum-normalized mode samples are obtained by dividing the matrix eigenvectors by ``\sqrt{\Delta t}``.
 
 ```julia
 G1 = correlation_matrix(T, ρt, H, J, Ls)
@@ -31,6 +31,17 @@ F = eigen(G1)
 Δt = T[2] - T[1]
 occupations = real.(F.values) .* Δt
 v1 = F.vectors[:, end] ./ sqrt(Δt)
+```
+
+For a nonuniform grid, choose quadrature weights ``w_j`` and diagonalize the Hermitian weighted kernel ``W^{1/2}G^{(1)}W^{1/2}``. Its eigenvalues are the mode occupations directly, and a normalized sampled mode is recovered by multiplying the corresponding eigenvector by ``W^{-1/2}``.
+
+```julia
+sqrtw = sqrt.(w)
+Gweighted = Hermitian(sqrtw .* Matrix(G1) .* transpose(sqrtw))
+F = eigen(Gweighted)
+
+occupations = real.(F.values)
+v1 = F.vectors[:, end] ./ sqrtw
 ```
 
 The eigenvectors are defined only up to an overall phase. If a later calculation depends on a particular phase convention, fix that phase explicitly before constructing the virtual-cavity coupling.
