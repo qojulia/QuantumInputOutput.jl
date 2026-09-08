@@ -292,7 +292,7 @@ g_{v_i}^{\mathrm{eff}}(t)
 {\sqrt{\int_{t_0}^{t}dt'\,|v_i^{\mathrm{eff}}(t')|^2}}.
 ```
 
-This finite auxiliary evolution is the multimode extension of the virtual-cavity construction [Kiilerich2020](@cite). The compact general input equation printed in that reference contains typographical sign/index errors; the backward recursion above follows its explicit two- and three-mode derivation. [`effective_input_mode`](@ref) and [`effective_output_mode`](@ref) expose the corresponding numerical construction.
+This finite auxiliary evolution is the multimode extension of the virtual-cavity construction [Kiilerich2020](@cite). The backward recursion above follows the explicit two- and three-mode construction in that reference. [`effective_input_mode`](@ref) and [`effective_output_mode`](@ref) expose the corresponding numerical construction.
 
 ## Discovering output modes
 
