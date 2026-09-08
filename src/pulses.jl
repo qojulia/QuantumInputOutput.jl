@@ -395,8 +395,9 @@ the ideal coupling is
 ```
 
 `u` and `v` may be sampled vectors, functions, or linear interpolations. The physical delay
-construction assumes the stored norm `D(t)` is nonnegative; the numerical implementation
-regularizes the denominator and returns a [`PulseCoupling`](@ref).
+construction requires `D(t) ≥ 0`; the sampled implementation evaluates the denominator as
+`√(abs(D) + ϵ)` and returns zero when it is below the division tolerance. The result is a
+[`PulseCoupling`](@ref).
 
 Use together with [`coupling_delay_in`](@ref). See [Quantum pulses and input-output theory](@ref)
 for the delay-cavity interpretation.
@@ -418,9 +419,9 @@ mode `u` and absorbs the mode `v`. With the same stored norm `D(t)` used by
 \tilde g_{\mathrm{in}}(t)=-\frac{v^*(t)}{\sqrt{D(t)}}.
 ```
 
-`u` and `v` may be sampled vectors, functions, or linear interpolations. The physical delay
-construction assumes `D(t)` is nonnegative; the numerical implementation regularizes the
-denominator and returns a [`PulseCoupling`](@ref).
+`u` and `v` may be sampled vectors, functions, or linear interpolations. The same physical
+condition `D(t) ≥ 0` and sampled denominator handling as in [`coupling_delay_out`](@ref)
+applies. The result is a [`PulseCoupling`](@ref).
 """
 coupling_delay_in(u::Vector, v::Vector, T::Vector) = _delay_coupling_from_modes(-v, u, v, T)
 coupling_delay_in(u::Function, v::Function, T::Vector) = coupling_delay_in(u.(T), v.(T), T)
