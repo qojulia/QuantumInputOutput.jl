@@ -34,7 +34,7 @@ G_L_t = G_L(2) ▷ G_ϕ(1, 2) ▷ G_L(1)
 # Concatenate both channels
 G_t = G_R_t ⊞ G_L_t
 
-H = hamiltonian(G_t)</code></pre><p class="math-container">\[0.5 ~ \mathtt{E_{{in}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{12}} - 0.5 ~ \mathtt{E_{{in}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{21}} - \mathtt{\Delta_{{1}}} {\sigma_{\mathrm{1}}}^{{22}} + 0.5 ~ \mathtt{E_{{in}}} ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} + 0.5 ~ \mathtt{E_{{in}}} ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{2}}}^{{12}} + 0.5 ~ \mathtt{E_{{in}}} ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} - 0.5 ~ \mathtt{E_{{in}}} ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{2}}}^{{21}} - \mathtt{\Delta_{{2}}} {\sigma_{\mathrm{2}}}^{{22}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} + \left( 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} - 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} \right) ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{12}}{\sigma_{\mathrm{2}}}^{{21}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} + \left(  - 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} + 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} \right) ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{21}}{\sigma_{\mathrm{2}}}^{{12}}\]</p><pre><code class="language-julia hljs">L = jump_operator(G_t)
+H = hamiltonian(G_t)</code></pre><p class="math-container">\[0.5 ~ \mathtt{E_{{in}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{12}} - 0.5 ~ \mathtt{E_{{in}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{21}} - \mathtt{\Delta_{{1}}} {\sigma_{\mathrm{1}}}^{{22}} + 0.5 ~ \mathtt{E_{{in}}} ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} + 0.5 ~ \mathtt{E_{{in}}} ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{2}}}^{{12}} + 0.5 ~ \mathtt{E_{{in}}} ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} - 0.5 ~ \mathtt{E_{{in}}} ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{2}}}^{{21}} - \mathtt{\Delta_{{2}}} {\sigma_{\mathrm{2}}}^{{22}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} + \left(  - 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} + 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} \right) ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{12}}{\sigma_{\mathrm{2}}}^{{21}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} + 0.5 ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} + \left( 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \sqrt{\mathtt{\gamma^{(2)}_{R}}} - 0.5 ~ \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \sqrt{\mathtt{\gamma^{(1)}_{L}}} \right) ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{21}}{\sigma_{\mathrm{2}}}^{{12}}\]</p><pre><code class="language-julia hljs">L = jump_operator(G_t)
 L_R = L[1]</code></pre><p class="math-container">\[\mathtt{E_{{in}}} ~ \cos\left( \mathtt{\phi_{{12}}} \right) + \mathtt{E_{{in}}} ~ \sin\left( \mathtt{\phi_{{12}}} \right) ~ \mathit{i} + \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} + \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(1)}_{R}}} ~ \mathit{i} {\sigma_{\mathrm{1}}}^{{12}} + \sqrt{\mathtt{\gamma^{(2)}_{R}}} {\sigma_{\mathrm{2}}}^{{12}}\]</p><pre><code class="language-julia hljs">L_L = L[2]</code></pre><p class="math-container">\[\sqrt{\mathtt{\gamma^{(1)}_{L}}} {\sigma_{\mathrm{1}}}^{{12}} + \cos\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} + \sin\left( \mathtt{\phi_{{12}}} \right) ~ \sqrt{\mathtt{\gamma^{(2)}_{L}}} ~ \mathit{i} {\sigma_{\mathrm{2}}}^{{12}}\]</p><p>Note that this Hamiltonian and Lindblad terms (without the drive) describe the collective decay of the quantum dots.</p><p>Next, the numerical parameters and functions of the system are defined, and we translate the symbolic expression to <a href="https://github.com/qojulia/QuantumOptics.jl">QuantumOptics.jl</a> operators to numerically solve the dynamics.</p><pre><code class="language-julia hljs">γ_ = 1.0
 β = 0.9 # waveguide coupling fraction
 γRn = fill(γ_ * β / 2, N)
@@ -96,7 +96,7 @@ plot!(
     grid = true,
     size = (500, 320),
 )
-p</code></pre><img src="7edb6e1f.svg" alt="Example block output"/><h2 id="Quantum-regression-theorem"><a class="docs-heading-anchor" href="#Quantum-regression-theorem">Quantum regression theorem</a><a id="Quantum-regression-theorem-1"></a><a class="docs-heading-anchor-permalink" href="#Quantum-regression-theorem" title="Permalink"></a></h2><p>In the following, we calculate the two-time correlation function <span>$G^{(2)}(t_1,t_2)$</span> for the transmitted and reflected pulse via the quantum regression theorem.</p><pre><code class="language-julia hljs"># two-time correlation function G2(t1, t2)
+p</code></pre><img src="1306b898.svg" alt="Example block output"/><h2 id="Quantum-regression-theorem"><a class="docs-heading-anchor" href="#Quantum-regression-theorem">Quantum regression theorem</a><a id="Quantum-regression-theorem-1"></a><a class="docs-heading-anchor-permalink" href="#Quantum-regression-theorem" title="Permalink"></a></h2><p>In the following, we calculate the two-time correlation function <span>$G^{(2)}(t_1,t_2)$</span> for the transmitted and reflected pulse via the quantum regression theorem.</p><pre><code class="language-julia hljs"># two-time correlation function G2(t1, t2)
 lT = length(T)
 G2 = zeros(lT, lT) # transmission
 G2_ref = zeros(lT, lT) # reflection</code></pre><p>Materialize the lazy <code>TimeDependentSum</code> to a concrete operator at each time, so the quantum-regression products below give a plain operator usable as the solver&#39;s initial state.</p><pre><code class="language-julia hljs">L0(t) = dense(static_operator(L_R_QO(t)))
@@ -150,7 +150,7 @@ p_trans = heatmap(
     ylabel = L&quot;t_2&quot;,
     colorbar_title = L&quot;G^{(2)}(t_1, t_2)[a.u.]&quot;,
 )
-plot(p_ref, p_trans; layout = (1, 2), size = (700, 300))</code></pre><img src="3e58dce8.svg" alt="Example block output"/><h2 id="Package-versions"><a class="docs-heading-anchor" href="#Package-versions">Package versions</a><a id="Package-versions-1"></a><a class="docs-heading-anchor-permalink" href="#Package-versions" title="Permalink"></a></h2><p>These results were obtained using the following versions:</p><pre><code class="language-julia hljs">using InteractiveUtils
+plot(p_ref, p_trans; layout = (1, 2), size = (700, 300))</code></pre><img src="e7855c31.svg" alt="Example block output"/><h2 id="Package-versions"><a class="docs-heading-anchor" href="#Package-versions">Package versions</a><a id="Package-versions-1"></a><a class="docs-heading-anchor-permalink" href="#Package-versions" title="Permalink"></a></h2><p>These results were obtained using the following versions:</p><pre><code class="language-julia hljs">using InteractiveUtils
 versioninfo()
 
 using Pkg
@@ -163,15 +163,15 @@ Pkg.status(
         &quot;LaTeXStrings&quot;,
     ],
     mode = PKGMODE_MANIFEST,
-)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.12.7
-Commit 6d172b025e4 (2026-08-15 08:05 UTC)
+)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Julia Version 1.13.0
+Commit d1c37793dd2 (2026-09-09 19:00 UTC)
 Build Info:
   Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 4 × AMD EPYC 7763 64-Core Processor
   WORD_SIZE: 64
-  LLVM: libLLVM-18.1.7 (ORCJIT, znver3)
+  LLVM: libLLVM-20.1.8 (ORCJIT, znver3)
   GC: Built with stock GC
 Threads: 4 default, 1 interactive, 4 GC (on 4 virtual cores)
 Environment:
@@ -179,8 +179,68 @@ Environment:
   JULIA_DEBUG = Documenter
   JULIA_NUM_THREADS = auto
 <span class="sgr32"><span class="sgr1">Status</span></span> `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl/docs/Manifest.toml`
+<span class="sgr33">⌅</span> <span class="sgr90">[7d9fca2a] </span>Arpack v0.5.3
+<span class="sgr33">⌅</span> <span class="sgr90">[861a8166] </span>Combinatorics v1.0.2
+  <span class="sgr90">[d38c429a] </span>Contour v0.6.3
+<span class="sgr33">⌅</span> <span class="sgr90">[82cc6244] </span>DataInterpolations v9.5.0
+  <span class="sgr90">[459566f4] </span>DiffEqCallbacks v4.19.3
+  <span class="sgr90">[77a26b50] </span>DiffEqNoiseProcess v5.36.3
+  <span class="sgr90">[c87230d0] </span>FFMPEG v0.4.5
+  <span class="sgr90">[7a1cc6ca] </span>FFTW v1.10.0
+<span class="sgr33">⌅</span> <span class="sgr90">[53c48c17] </span>FixedPointNumbers v0.8.6
+  <span class="sgr90">[069b7b12] </span>FunctionWrappers v1.1.3
+  <span class="sgr90">[28b8d3ca] </span>GR v0.73.27
+  <span class="sgr90">[42fd0dbc] </span>IterativeSolvers v0.9.4
+  <span class="sgr90">[1019f520] </span>JLFzf v0.1.11
+  <span class="sgr90">[682c06a0] </span>JSON v1.8.0
+  <span class="sgr90">[0b1a1467] </span>KrylovKit v0.10.4
   <span class="sgr90">[b964fa9f] </span>LaTeXStrings v1.4.1
+  <span class="sgr90">[23fbe1c1] </span>Latexify v0.16.12
+  <span class="sgr90">[7a12625a] </span>LinearMaps v3.11.4
+  <span class="sgr90">[442fdcdd] </span>Measures v0.3.3
+  <span class="sgr90">[d8a4904e] </span>MutableArithmetics v1.8.0
+  <span class="sgr90">[77ba4419] </span>NaNMath v1.1.4
+  <span class="sgr90">[e7bfaba1] </span>NumericalIntegration v0.3.4
+  <span class="sgr90">[1dea7af3] </span>OrdinaryDiffEq v7.8.1
+  <span class="sgr90">[1344f307] </span>OrdinaryDiffEqLowOrderRK v2.2.5
+  <span class="sgr90">[ccf2f8ad] </span>PlotThemes v3.3.0
+  <span class="sgr90">[995b91a9] </span>PlotUtils v1.4.4
   <span class="sgr90">[91a5bcdd] </span>Plots v1.41.7
+  <span class="sgr90">[aea7be01] </span>PrecompileTools v1.3.4
   <span class="sgr90">[18f9eda6] </span>QuantumInputOutput v0.5.3 `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl`
+  <span class="sgr90">[5717a53b] </span>QuantumInterface v0.4.4
   <span class="sgr90">[6e0679c1] </span>QuantumOptics v1.2.9
-  <span class="sgr90">[f7aa4685] </span>SecondQuantizedAlgebra v0.11.0</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../04-2_two-sided-cavity_with-atom_coh-drive__cumulants/">« Mean-field Two-sided Cavity</a><a class="docs-footer-nextpage" href="../05-2_N-QDs_bidirectional-waveguide_quantum-pulse_qo/">Quantum Pulse Bi-Directional Waveguide »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 14:43">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  <span class="sgr90">[4f57444f] </span>QuantumOpticsBase v0.5.15
+  <span class="sgr90">[3cdcf5f2] </span>RecipesBase v1.3.4
+  <span class="sgr90">[01d81517] </span>RecipesPipeline v0.6.12
+  <span class="sgr90">[731186ca] </span>RecursiveArrayTools v4.5.1
+  <span class="sgr90">[189a3867] </span>Reexport v1.2.2
+  <span class="sgr90">[05181044] </span>RelocatableFolders v1.0.1
+  <span class="sgr90">[ae029012] </span>Requires v1.3.1
+  <span class="sgr90">[0bca4576] </span>SciMLBase v3.53.2
+  <span class="sgr90">[431bcebd] </span>SciMLPublic v1.3.0
+  <span class="sgr90">[6c6a2e73] </span>Scratch v1.3.0
+<span class="sgr33">⌅</span> <span class="sgr90">[f7aa4685] </span>SecondQuantizedAlgebra v0.11.0
+  <span class="sgr90">[992d4aef] </span>Showoff v1.1.1
+  <span class="sgr90">[276daf66] </span>SpecialFunctions v2.9.0
+  <span class="sgr90">[90137ffa] </span>StaticArrays v1.9.20
+  <span class="sgr90">[10745b16] </span>Statistics v1.11.5
+  <span class="sgr90">[2913bbd2] </span>StatsBase v0.34.13
+  <span class="sgr90">[789caeaf] </span>StochasticDiffEq v7.2.0
+  <span class="sgr90">[d1185830] </span>SymbolicUtils v4.46.4
+  <span class="sgr90">[0c5d862f] </span>Symbolics v7.39.2
+  <span class="sgr90">[8ea1fca8] </span>TermInterface v2.0.0
+  <span class="sgr90">[1cfade01] </span>UnicodeFun v0.4.1
+  <span class="sgr90">[41fe7b60] </span>Unzip v0.2.0
+  <span class="sgr90">[2a0f44e3] </span>Base64 v1.11.0
+  <span class="sgr90">[ade2ca70] </span>Dates v1.11.0
+  <span class="sgr90">[f43a241f] </span>Downloads v1.7.0
+  <span class="sgr90">[37e2e46d] </span>LinearAlgebra v1.13.0
+  <span class="sgr90">[44cfe95a] </span>Pkg v1.13.0
+  <span class="sgr90">[de0858da] </span>Printf v1.11.0
+  <span class="sgr90">[3fa0cd96] </span>REPL v1.11.0
+  <span class="sgr90">[9a3f8284] </span>Random v1.11.0
+  <span class="sgr90">[2f01184e] </span>SparseArrays v1.13.0
+  <span class="sgr90">[fa267f1f] </span>TOML v1.0.3
+  <span class="sgr90">[cf7118a7] </span>UUIDs v1.11.0
+<span class="sgr36"><span class="sgr1">Info</span></span> Packages marked with <span class="sgr33">⌅</span> have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../04-2_two-sided-cavity_with-atom_coh-drive__cumulants/">« Mean-field Two-sided Cavity</a><a class="docs-footer-nextpage" href="../05-2_N-QDs_bidirectional-waveguide_quantum-pulse_qo/">Quantum Pulse Bi-Directional Waveguide »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 10 September 2026 16:33">Thursday 10 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
