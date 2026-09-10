@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788792057987,
+  "lastUpdate": 1789057541361,
   "repoUrl": "https://github.com/qojulia/QuantumInputOutput.jl",
   "entries": {
     "Benchmark Results": [
@@ -4696,6 +4696,168 @@ window.BENCHMARK_DATA = {
           {
             "name": "Translation/time-dependent/atom-cavity",
             "value": 43828,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=36336\nallocs=785\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "orjan.ameye@hotmail.com",
+            "name": "Orjan Ameye",
+            "username": "oameye"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20e7a27cef2bf397f961851b2b12d80ac8b30bdf",
+          "message": "compat: support SecondQuantizedAlgebra 0.12 (#74)",
+          "timestamp": "2026-09-10T18:11:48+02:00",
+          "tree_id": "c902e220c2721c248f3a4f1d3499c890305cb11a",
+          "url": "https://github.com/qojulia/QuantumInputOutput.jl/commit/20e7a27cef2bf397f961851b2b12d80ac8b30bdf"
+        },
+        "date": 1789057536381,
+        "tool": "julia",
+        "benches": [
+          {
+            "name": "Correlations/two-time/single photon cavity",
+            "value": 143054769,
+            "unit": "ns",
+            "extra": "gctime=11968890\nmemory=198244440\nallocs=582189\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Interaction Picture/coefficient matrix M/analytical (2 equal modes)",
+            "value": 11532,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=16784\nallocs=58\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Interaction Picture/coefficient matrix M/numerical (ODE)",
+            "value": 53669,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=48872\nallocs=553\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Interaction Picture/coupling matrix evaluation/2 modes",
+            "value": 90.63447559709242,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=0\nallocs=0\nparams={\"evals\":963,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Interaction Picture/coupling matrix evaluation/4 modes",
+            "value": 157.6262755102041,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=0\nallocs=0\nparams={\"evals\":784,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Interaction Picture/operator substitution/TLS cascade",
+            "value": 18081,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=41776\nallocs=498\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/multi-pulse/input 2 modes",
+            "value": 309367,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=984768\nallocs=491\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/multi-pulse/output 2 modes",
+            "value": 369872,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=1141248\nallocs=424\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/single-pulse/input",
+            "value": 240773,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=561352\nallocs=32\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/single-pulse/input Gaussian",
+            "value": 94.49947423764459,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=112\nallocs=3\nparams={\"evals\":951,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/single-pulse/output",
+            "value": 271033,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=721488\nallocs=35\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Pulse Couplings/single-pulse/output Gaussian",
+            "value": 86.65140478668054,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=112\nallocs=3\nparams={\"evals\":961,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/closure evaluation/2-QD waveguide H(t)",
+            "value": 27173,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=130320\nallocs=321\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/closure evaluation/2-QD waveguide L(t)",
+            "value": 2808,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=16168\nallocs=29\nparams={\"evals\":9,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/numeric/2-QD waveguide composition",
+            "value": 24971,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=56704\nallocs=329\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/symbolic/3-cavity cascade",
+            "value": 6162.833333333333,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=22192\nallocs=205\nparams={\"evals\":6,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/symbolic/concatenate + cascade",
+            "value": 2104.8,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=10016\nallocs=82\nparams={\"evals\":10,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "SLH Algebra/symbolic/feedback OPO loop",
+            "value": 5150.333333333333,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=20368\nallocs=168\nparams={\"evals\":6,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Translation/closure evaluation/3-cavity H(t)",
+            "value": 5582,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=59344\nallocs=55\nparams={\"evals\":6,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Translation/closure evaluation/3-cavity L(t)",
+            "value": 5625.666666666667,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=63824\nallocs=55\nparams={\"evals\":6,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Translation/static/atom-cavity",
+            "value": 16904,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=19456\nallocs=337\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Translation/time-dependent/3-cavity H+L",
+            "value": 325572,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=404064\nallocs=3115\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
+          },
+          {
+            "name": "Translation/time-dependent/atom-cavity",
+            "value": 49641,
             "unit": "ns",
             "extra": "gctime=0\nmemory=36336\nallocs=785\nparams={\"evals\":1,\"evals_set\":false,\"gcsample\":false,\"gctrial\":true,\"memory_tolerance\":0.01,\"overhead\":0,\"samples\":10000,\"seconds\":5,\"time_tolerance\":0.05}"
           }
