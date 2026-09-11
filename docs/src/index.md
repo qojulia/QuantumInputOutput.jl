@@ -5,7 +5,7 @@ layout: home
 hero:
   name: QuantumInputOutput.jl
   text: Composable input-output models for propagating quantum pulses
-  tagline: Symbolic SLH network construction and numerical pulse dynamics in Julia.
+  tagline: Symbolic SLH network construction and numerical pulse dynamics.
   actions:
     - theme: brand
       text: Tutorial
@@ -36,8 +36,8 @@ features:
   - icon: ∫
     title: Recover output modes
     details: Compute field correlations, identify populated temporal modes, and promote selected outgoing modes back into explicit quantum subsystems.
-  - icon: Δt
-    title: Extend pulse models
+  - icon: +
+    title: Additional features
     details: Use interaction-picture transformations for efficient simulations and virtual delay cavities to model pulse propagation delays.
 ---
 ```
