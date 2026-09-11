@@ -1,40 +1,79 @@
-# Introduction
+```@raw html
+---
+layout: home
 
-[![Documentation stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qojulia.github.io/QuantumInputOutput.jl/stable/)
-[![Documentation dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qojulia.github.io/QuantumInputOutput.jl/dev/)
-[![Tests](https://github.com/qojulia/QuantumInputOutput.jl/actions/workflows/Tests.yml/badge.svg)](https://github.com/qojulia/QuantumInputOutput.jl/actions/workflows/Tests.yml)
-[![codecov](https://codecov.io/gh/qojulia/QuantumInputOutput.jl/graph/badge.svg)](https://codecov.io/gh/qojulia/QuantumInputOutput.jl)
-[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-[![JET](https://img.shields.io/badge/%F0%9F%9B%A9%EF%B8%8F_tested_with-JET.jl-233f9a)](https://github.com/aviatesk/JET.jl)
+hero:
+  name: QuantumInputOutput.jl
+  text: Composable input-output models for propagating quantum pulses
+  tagline: Symbolic SLH network construction and numerical pulse dynamics.
+  actions:
+    - theme: brand
+      text: Tutorial
+      link: tutorial.md
+    - theme: alt
+      text: Theory
+      link: theory.md
+    - theme: alt
+      text: Implementation
+      link: implementation.md
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/qojulia/QuantumInputOutput.jl
+  image:
+    src: /assets/logo.svg
+    alt: QuantumInputOutput.jl Gaussian-pulse logo
 
-**QuantumInputOutput.jl** is a Julia framework for modeling the input-output theory with quantum pulses, using SLH (scattering, Lindblad, Hamiltonian) elements and rules. It combines:
-- a symbolic layer based on [SecondQuantizedAlgebra.jl](https://github.com/qojulia/SecondQuantizedAlgebra.jl) to build models using SLH rules
-- a numerical layer based on [QuantumOptics.jl](https://github.com/qojulia/QuantumOptics.jl) and [QuantumCumulants.jl](https://github.com/qojulia/QuantumCumulants.jl) to simulate time dynamics and observables in a full quantum or higher-order meanfield approach, respectively
-
-The typical workflow is:
-1. Build the SLH model symbolically
-2. Translate to numerical operators
-3. Evolve the system in time
-4. Analyze output modes and correlations
-
-## Key Features
-
-- SLH modeling with cascade, concatenate, and feedback reduction rules
-- Symbolic-to-numeric translation (including time-dependent couplings)
-- Utilities for pulse modes, virtual cavities, interaction picture and pulse delay
-- Two-time correlation functions and output-mode extraction
-- Compatibility with [QuantumOptics.jl](https://github.com/qojulia/QuantumOptics.jl) and [QuantumCumulants.jl](https://github.com/qojulia/QuantumCumulants.jl)
-
-## Installation
-
-```julia
-|pkg> add QuantumInputOutput
+features:
+  - icon: ⇢
+    title: Compose quantum networks
+    details: Build quantum networks from SLH components using cascade, concatenation, and feedback reduction.
+  - icon: 〰️
+    title: Embed traveling pulses
+    details: Represent selected temporal input and output modes as virtual cavities inside an ordinary open quantum system.
+  - icon: ℏ
+    title: Translate to numerics
+    details: Translate symbolic SLH models into numerical representations for full Hilbert-space or cumulant-based dynamics.
+  - icon: ∫
+    title: Recover output modes
+    details: Compute field correlations, identify populated temporal modes, and promote selected outgoing modes back into explicit quantum subsystems.
+  - icon: +
+    title: Additional features
+    details: Use interaction-picture transformations for efficient simulations and virtual delay cavities to model pulse propagation delays.
+---
 ```
 
-## Where to Go
+```@meta
+CurrentModule = QuantumInputOutput
+```
 
-- [Tutorial](@ref) for a complete walkthrough of cavity scattering
-- [Theory](@ref) for the input-output formalism with quantum pulses
-- [Implementation](@ref) for the symbolic-to-numeric pipeline
-- [API](@ref) for the full list of functions
-- [Examples](examples/01-1_cavity-scattering__PRL2019_123-123604_fig2-fig3.md) for multiple different usage illustrations
+`QuantumInputOutput.jl` is a Julia framework for constructing and simulating quantum input-output networks with propagating pulses. The package separates **physical model construction** from **numerical evolution**: users describe the network and the traveling modes, while QuantumInputOutput derives the corresponding symbolic Hamiltonian, coupling operators, and scattering structure needed by standard open-system solvers.
+
+## Core Workflow
+
+### 1. Compose the network
+
+Represent quantum systems and their input-output connections as SLH elements, then combine them algebraically using cascade, concatenation, and feedback reduction. This keeps the model close to the physical network instead of requiring a manual derivation of the final master equation.
+
+### 2. Embed propagating pulses
+
+Selected temporal input and output modes are represented by virtual cavities with time-dependent couplings. Traveling quantum states therefore become ordinary quantum degrees of freedom that can be evolved with standard open-system methods.
+
+### 3. Choose the numerical representation
+
+The symbolic model can be translated to numerical operators for full Hilbert-space calculations with QuantumOptics.jl, or used with QuantumCumulants.jl for reduced moment dynamics. QuantumInputOutput owns the network and pulse representation rather than a single numerical solver.
+
+### 4. Analyze the outgoing field
+
+Two-time field correlations provide a temporal-mode decomposition of the outgoing radiation. Dominant output modes can then be treated as explicit quantum subsystems for state and observable calculations.
+
+See the [Theory](theory.md) for the underlying input-output and virtual-cavity formalism, [Implementation](implementation.md) for the symbolic-to-numeric pipeline, [API](api.md) for the public interface, and [Relevant Literature](literature.md) for the foundational papers.
+
+## Get Started
+
+Install the package with Julia's package manager:
+
+```julia-repl
+pkg> add QuantumInputOutput
+```
+
+Then start with the [Tutorial](tutorial.md), which walks through the complete pulse-scattering workflow from model construction to output-mode extraction.
