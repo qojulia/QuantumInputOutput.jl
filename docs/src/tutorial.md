@@ -1,12 +1,12 @@
 # Tutorial
 
-The basic usage is probably best illustrated with a brief example. In the following, we describe the cavity scattering of a single photon. A common procedure is as follows 
+The basic workflow is illustrated by scattering a single photon from a cavity:
 
-1. build the SLH model
-2. translate it to numerical operators
-3. simulate the dynamics
-4. compute the two-time correlation matrix and extract the dominant output mode
-5. simulate the dynamics again with the output mode
+1. build the SLH model;
+2. translate it to numerical operators;
+3. simulate the dynamics;
+4. compute the two-time correlation matrix and extract the dominant output mode;
+5. simulate the dynamics again with that output mode represented explicitly.
 
 ## 1. Setup and symbolic model
 
@@ -36,7 +36,7 @@ av = Destroy(h, :a_v, 3)
 nothing # hide
 ```
 
-The SLH triples for the input mode, system cavity, and output mode are then cascaded to obtain the effective Hamiltonian and Lindblad operator.
+The SLH triples for the input mode, system cavity, and output mode are then cascaded to obtain the effective Hamiltonian and jump operator.
 
 ```@example tutorial
 G_u = SLH(1, g_u * au, 0)
@@ -57,7 +57,7 @@ L = jump_operator(G_cas)[1]
 
 ## 2. Numerical parameters and input pulse
 
-We choose numerical parameters and define a Gaussian input pulse `u(t)` and calculate the corresponding coupling function `g_u(t)`.
+We choose numerical parameters, define a Gaussian input pulse `u(t)`, and calculate the corresponding coupling function `g_u(t)`.
 
 ```@example tutorial
 γ_ = 1.0
@@ -79,7 +79,7 @@ dict_p_t = Dict(g_u => gu_t)
 nothing # hide
 ```
 
-We define the numerical basis and translate the symbolic operators into [QuantumOptics.jl](https://github.com/qojulia/QuantumOptics.jl) objects. If `time_parameter` are provided, the result becomes a function of time. Since the purpose of the package is to describe pulses, this is the usual case.  
+We define the numerical basis and translate the symbolic operators into [QuantumOptics.jl](https://github.com/qojulia/QuantumOptics.jl) objects. With time-dependent parameters, the translated operators become time dependent as well; pulse problems normally use this form.
 
 ```@example tutorial
 bu1 = FockBasis(2)
@@ -94,7 +94,7 @@ nothing # hide
 
 ## 3. Time evolution
 
-We now solve the master equation. The required callback for `timeevolution.master_dynamic` returns `H(t)`, `J(t)` and `J⁺(t)` at each time.
+We now solve the master equation. The required callback for `timeevolution.master_dynamic` returns `H(t)`, `J(t)`, and `J⁺(t)` at each time.
 
 ```@example tutorial
 function input_output_1(t, ρ)
@@ -110,8 +110,11 @@ nothing # hide
 
 ## 4. Two-time correlation function
 
-To extract the dominant output mode, we compute the two-time correlation matrix
-``g^{(1)}(t_1,t_2) = \langle L_s^\dagger(t_1) L_s(t_2) \rangle`` and diagonalize it. To this end, we first define the desired numerical operators. 
+The conventional first-order coherence is
+``g^{(1)}(t_1,t_2)=\langle L_s^\dagger(t_1)L_s(t_2)\rangle``. `correlation_matrix` returns the transposed Hermitian kernel
+``K(t_1,t_2)=g^{(1)}(t_2,t_1)=\langle L_s^\dagger(t_2)L_s(t_1)\rangle``. With this orientation, the eigenvectors of the returned matrix directly represent the temporal mode functions rather than their complex conjugates.
+
+We first define the emitted-field operator and evaluate the kernel from the trajectory computed above.
 
 ```@example tutorial
 au_qo = to_numeric(au, b)
@@ -131,28 +134,32 @@ p = heatmap(
     c = :inferno,
     xlabel = L"\gamma t_2",
     ylabel = L"\gamma t_1",
-    colorbar_title = L"g^{(1)}(t_1,t_2)",
+    colorbar_title = L"K(t_1,t_2)",
     size = (400, 350),
 )
 p
 ```
 
-The dominant temporal output mode corresponds to the eigenvector with the largest eigenvalue. With the average photon number in each mode, we can see that the photon is scattered into a single temporal mode.
+To approximate the continuous integral eigenproblem, we include quadrature weights before diagonalization. Here we use trapezoidal weights on the uniform time grid. The eigenvalues of the weighted kernel are then the mode occupations directly, and applying the inverse square-root weights to an eigenvector gives the continuum-normalized mode samples.
 
 ```@example tutorial
-F = eigen(g1_m)
-ΔT = T[2] - T[1]
-n_avg =  round.(real.(F.values)*ΔT; digits=3)
+w = fill(ΔT, length(T))
+w[1] *= 0.5
+w[end] *= 0.5
+sqrtw = sqrt.(w)
 
-modes = F.vectors
-v_mode = modes[:, end] / sqrt(ΔT)
+Kweighted = Hermitian(sqrtw .* Matrix(g1_m) .* transpose(sqrtw))
+F = eigen(Kweighted)
+n_avg = round.(real.(F.values); digits=3)
+
+v_mode = F.vectors[:, end] ./ sqrtw
 @show n_avg[end-1:end]
 nothing # hide
 ```
 
 ## 5. Output mode and full dynamics
 
-Finally, we treat the dominant output mode explicitly by providing `g_v(t)` as a time-dependent parameter, and propagate the system again.
+Finally, we treat the dominant output mode explicitly by providing `g_v(t)` as a time-dependent parameter and propagate the system again.
 
 ```@example tutorial
 gv_t = coupling_output(v_mode, T)
@@ -180,7 +187,7 @@ n_v_t = real.(expect(av_qo' * av_qo, ρt_2))
 nothing # hide
 ```
 
-Due to the linearity of the system the photon is fully scattered into a single mode. 
+Due to the linearity of the system, the photon is fully scattered into a single mode.
 
 ```@example tutorial
 p1 = plot(T, u1.(T); ls = :dash, label = "u", color = :red)
@@ -209,7 +216,7 @@ plot!(
     xlims = (0, 12),
     ylims = (0, 1),
     xlabel = "time (1/γ)",
-    ylabel = "Exciations",
+    ylabel = "Excitations",
     legend = :best,
 )
 

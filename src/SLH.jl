@@ -88,12 +88,26 @@ end
 # ──────────────────────────────────────────────
 
 """
-    SLH{N, ST, LT, HT}
+    SLH(S, L, H)
 
-SLH triple with scattering matrix `S`, jump-operator vector `L`, and Hamiltonian `H`.
-`S` and `L` can also be vectors of scattering matrices and jump operators.
+Represent an ``N``-port Markovian input-output component by its SLH triple
+``G=(S,L,H)``:
 
-See also [`▷`](@ref), [`⊞`](@ref), [`feedback`](@ref)
+- `S` is the ``N × N`` scattering matrix;
+- `L` contains one coupling (jump) operator per port;
+- `H` is the internal Hamiltonian.
+
+When `L` is a vector, `S` may be an ``N × N`` matrix or a scalar, in which case it is
+interpreted as `S * I`. Scalar `S` and scalar `L` construct a one-port component. Internally,
+`S` and `L` are stored as static arrays, so the number of ports is part of the `SLH{N}` type.
+
+The operator entries may be symbolic or numerical. `L` and `H` may also contain
+single-argument time-dependent callables when their concrete operator return type can be
+inferred; this allows the same network algebra to be used before or after numerical
+translation.
+
+Use [`scattering`](@ref), [`jump_operator`](@ref), and [`hamiltonian`](@ref) to access the
+three parts. Networks are built with [`▷`](@ref), [`⊞`](@ref), and [`feedback`](@ref).
 """
 struct SLH{N,ST,LT,HT,L}
     scattering::SMatrix{N,N,ST,L}
@@ -325,12 +339,25 @@ end
 
 """
     ▷(G1::SLH{N}, G2::SLH{N}) where N
+    ▷(G1::SLH, G2::SLH, Gs::SLH...)
 
-Cascade two SLH triples:
+Cascade equally sized SLH systems from left to right: `G1 ▷ G2` connects every output port
+of `G1` to the corresponding input port of `G2`. The two-system series product is
 
-``G_1 \\triangleright G_2 = (S_2 S_1,\\; L_2 + S_2 L_1,\\; H_1 + H_2 - \\tfrac{i}{2}(L_2^\\dagger S_2 L_1 - L_1^\\dagger S_2^\\dagger L_2))``
+```math
+G_1 \triangleright G_2 = \left(
+S_2S_1,
+L_2+S_2L_1,
+H_1+H_2+\frac{1}{2i}
+\left[L_2^\dagger S_2L_1-L_1^\dagger S_2^\dagger L_2\right]
+\right).
+```
 
-Unicode `\\triangleright<tab>`. See also [`cascade`](@ref).
+All cascaded systems must have the same number of ports; otherwise a `DimensionMismatch` is
+thrown. The variadic form is evaluated in physical order, so `G1 ▷ G2 ▷ G3` sends the output
+of `G1` through `G2` and then `G3`.
+
+Unicode input: `\\triangleright<tab>`. See also [`cascade`](@ref) and [`⊞`](@ref).
 """
 function ▷(G1::SLH{N}, G2::SLH{N}) where {N}
     S1, L1, H1 = scattering(G1), jump_operator(G1), hamiltonian(G1)
@@ -364,7 +391,7 @@ end
 """
     cascade(G::SLH...)
 
-Cascade SLH triples from first to last. Alias for [`▷`](@ref).
+Cascade SLH systems from first to last. Named alias for [`▷`](@ref).
 """
 cascade(args...) = ▷(args...)
 
@@ -374,13 +401,22 @@ cascade(args...) = ▷(args...)
 
 """
     ⊞(G1::SLH{N1}, G2::SLH{N2})
+    ⊞(G1::SLH, G2::SLH, Gs::SLH...)
 
-Concatenate (parallel composition) of two SLH triples:
+Place SLH systems in parallel without connecting their channels. For two systems,
 
-``G_1 \\boxplus G_2 = \\left(\\begin{pmatrix} S_1 & 0 \\\\ 0 & S_2 \\end{pmatrix},\\;
-\\begin{pmatrix} L_1 \\\\ L_2 \\end{pmatrix},\\; H_1 + H_2\\right)``
+```math
+G_1 \boxplus G_2 = \left(
+\begin{bmatrix}S_1&0\\0&S_2\end{bmatrix},
+\begin{bmatrix}L_1\\L_2\end{bmatrix},
+H_1+H_2
+\right).
+```
 
-Unicode `\\boxplus<tab>`. See also [`concatenate`](@ref).
+The resulting system has `N1 + N2` ports, with the ports of `G1` followed by those of `G2`.
+The variadic form preserves this left-to-right ordering.
+
+Unicode input: `\\boxplus<tab>`. See also [`concatenate`](@ref) and [`▷`](@ref).
 """
 @generated function ⊞(G1::SLH{N1}, G2::SLH{N2}) where {N1,N2}
     N = N1 + N2
@@ -412,7 +448,7 @@ end
 """
     concatenate(G::SLH...)
 
-Concatenate (parallel composition) of SLH triples. Alias for [`⊞`](@ref).
+Place SLH systems in parallel. Named alias for [`⊞`](@ref).
 """
 concatenate(args...) = ⊞(args...)
 
@@ -455,11 +491,23 @@ end
 
 """
     feedback(G::SLH{N}, x::Int, y::Int) where N
+    feedback(G::SLH, x => y)
+    feedback(G::SLH, connections::Pair{Int,Int}...)
 
-Apply the SLH feedback reduction rule: connect output port `x` to input port `y`.
-Returns `SLH{N-1}`.
+Close an internal connection by feeding output port `x` back into input port `y`. A single
+connection removes one input and one output and returns an `SLH{N-1}` system using the
+standard SLH feedback reduction.
 
-See also [`SLH`](@ref), [`▷`](@ref), [`⊞`](@ref).
+For several connections, each `x => y` pair is expressed in the port numbering of the
+original, unreduced `G`. The implementation remaps those labels after each reduction, so the
+caller does not renumber later connections manually. An input or output port can be
+eliminated only once.
+
+The reduction contains the loop factor `(1 - S[x, y])⁻¹`; the corresponding scalar or
+symbolic expression must therefore be invertible. Port indices are one-based and must lie in
+the current system.
+
+See also [`▷`](@ref) and [`⊞`](@ref).
 """
 function feedback(G::SLH{N}, x::Int, y::Int) where {N}
     _feedback_impl(G, x, y, Val(N - 1))
@@ -541,12 +589,14 @@ end
 """
     to_numeric(G::SLH, b::QuantumOpticsBase.Basis; kwargs...)
 
-Translate the Hamiltonian and Lindblad operators of an SLH object `G` into numeric
-[QuantumOptics.jl](https://github.com/qojulia/QuantumOptics.jl) operators on the basis `b`.
-Returns the tuple `(H_QO, L_QO)`, where `L_QO` is a vector holding one translated operator
-per jump operator in `jump_operator(G)`. All keyword arguments (`parameter`, `time_parameter`,
-`operators`, `adjoint_ops`, `op_type`) are forwarded to
-[`SecondQuantizedAlgebra.to_numeric`](@ref).
+Translate the Hamiltonian and jump operators of `G` into numerical QuantumOptics.jl
+operators on the basis `b`. Returns `(H_QO, L_QO)`, where `L_QO` contains one translated
+operator for each entry of [`jump_operator(G)`](@ref).
+
+All keyword arguments, including `parameter`, `time_parameter`, `operators`, `adjoint_ops`,
+and `op_type`, are forwarded to [`SecondQuantizedAlgebra.to_numeric`](@ref). Consequently,
+time-dependent pulse couplings can be supplied through `time_parameter` without changing the
+symbolic SLH network.
 """
 function SQA.to_numeric(G::SLH, b::QuantumOpticsBase.Basis; kwargs...)
     H_QO = SQA.to_numeric(hamiltonian(G), b; kwargs...)

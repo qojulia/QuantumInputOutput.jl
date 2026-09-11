@@ -1,11 +1,16 @@
 pages = [
     "Home" => "index.md",
+    "Tutorial" => "tutorial.md",
     "Manual" => [
-        "Tutorial" => "tutorial.md",
-        "Theory" => "theory.md",
-        "Implementation" => "implementation.md",
+        "SLH networks" => "manual/slh.md",
+        "Pulse modes" => "manual/pulses.md",
+        "Output modes" => "manual/output_modes.md",
+        "Interaction picture" => "manual/interaction_picture.md",
     ],
-    "Reference" => "api.md",
+    "Theory" => [
+        "Quantum pulses and input-output theory" => "theory/input_output.md",
+        "Interaction-picture formulation" => "theory/interaction_picture.md",
+    ],
     "Literature" => "literature.md",
     "Examples" => [
         "Cavity scattering" => "examples/01-1_cavity-scattering__PRL2019_123-123604_fig2-fig3.md",
