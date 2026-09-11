@@ -5,7 +5,7 @@ pages = [
         "Theory" => "theory.md",
         "Implementation" => "implementation.md",
     ],
-    "Reference" => "api.md",
+    "API" => "api.md",
     "Literature" => "literature.md",
     "Examples" => [
         "Cavity scattering" => "examples/01-1_cavity-scattering__PRL2019_123-123604_fig2-fig3.md",
