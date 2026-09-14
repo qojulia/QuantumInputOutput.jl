@@ -46,7 +46,7 @@ features:
 CurrentModule = QuantumInputOutput
 ```
 
-`QuantumInputOutput.jl` is a Julia framework for constructing and simulating quantum input-output networks with propagating pulses. The package separates **physical model construction** from **numerical evolution**: users describe the network and the traveling modes, while QuantumInputOutput derives the corresponding symbolic Hamiltonian, coupling operators, and scattering structure needed by standard open-system solvers.
+`QuantumInputOutput.jl` is a Julia framework for constructing and simulating quantum input-output networks with propagating pulses, using the SLH (scattering, Lindblad, Hamiltonian) and virtual cavity formalism. The package separates **physical model construction** from **numerical evolution**: users describe the network and the traveling modes, while QuantumInputOutput derives the corresponding symbolic Hamiltonian, coupling operators, and scattering structure needed by standard open-system solvers.
 
 ## Core Workflow
 
