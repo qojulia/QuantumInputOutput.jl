@@ -5,9 +5,9 @@ Build Info:
   Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 4 × Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+  CPU: 4 × AMD EPYC 9V74 80-Core Processor
   WORD_SIZE: 64
-  LLVM: libLLVM-20.1.8 (ORCJIT, icelake-server)
+  LLVM: libLLVM-20.1.8 (ORCJIT, znver4)
   GC: Built with stock GC
 Threads: 1 default, 0 interactive, 1 GC (on 4 virtual cores)
 Environment:
@@ -19,7 +19,7 @@ Status `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl/docs/Manifest.toml`
 ⌅ [861a8166] Combinatorics v1.0.2
   [d38c429a] Contour v0.6.3
 ⌅ [82cc6244] DataInterpolations v9.5.0
-  [459566f4] DiffEqCallbacks v4.19.3
+  [459566f4] DiffEqCallbacks v4.19.4
   [77a26b50] DiffEqNoiseProcess v5.36.3
   [c87230d0] FFMPEG v0.4.5
   [7a1cc6ca] FFTW v1.10.0
@@ -45,15 +45,15 @@ Status `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl/docs/Manifest.toml`
   [aea7be01] PrecompileTools v1.3.4
   [18f9eda6] QuantumInputOutput v0.5.3 `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl`
   [5717a53b] QuantumInterface v0.4.4
-  [6e0679c1] QuantumOptics v1.2.9
-  [4f57444f] QuantumOpticsBase v0.5.15
+  [6e0679c1] QuantumOptics v1.2.10
+  [4f57444f] QuantumOpticsBase v0.5.16
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
-  [0bca4576] SciMLBase v3.53.2
+  [0bca4576] SciMLBase v3.54.0
   [431bcebd] SciMLPublic v1.3.0
   [6c6a2e73] Scratch v1.3.0
 ⌅ [f7aa4685] SecondQuantizedAlgebra v0.11.0
@@ -63,7 +63,7 @@ Status `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl/docs/Manifest.toml`
   [10745b16] Statistics v1.11.5
   [2913bbd2] StatsBase v0.34.13
   [789caeaf] StochasticDiffEq v7.2.0
-  [d1185830] SymbolicUtils v4.46.4
+  [d1185830] SymbolicUtils v4.46.6
   [0c5d862f] Symbolics v7.39.2
   [8ea1fca8] TermInterface v2.0.0
   [1cfade01] UnicodeFun v0.4.1
@@ -80,4 +80,4 @@ Status `~/work/QuantumInputOutput.jl/QuantumInputOutput.jl/docs/Manifest.toml`
   [fa267f1f] TOML v1.0.3
   [cf7118a7] UUIDs v1.11.0
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
-</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../06-1_interaction-picture__PRA2023_107-013706_fig2/">« Interaction picture</a><a class="docs-footer-nextpage" href="../07-2_hong-ou-mandel__quantum-pulse/">Hong-Ou-Mandel interference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Friday 11 September 2026 20:16">Friday 11 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div><div class="ref-tips" hidden><div class="ref-tip" data-for="../../api/#QuantumInputOutput.SLH"><code class="ref-tip-sig nohighlight"><span class="julia-type">SLH</span>{<span class="julia-type">N</span>, <span class="julia-type">ST</span>, <span class="julia-type">LT</span>, <span class="julia-type">HT</span>}</code><p class="ref-tip-brief">SLH triple with scattering matrix S, jump-operator vector L, and Hamiltonian H.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.coupling_input@arity-2"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">coupling_input</span>(u, T)</code><p class="ref-tip-brief">Compute the virtual-cavity input coupling from an input mode u(t) sampled on time grid T.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.coupling_output@arity-2"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">coupling_output</span>(v, T)</code><p class="ref-tip-brief">Compute the virtual-cavity output coupling from an output mode v(t) sampled on time grid T.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.hamiltonian"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">hamiltonian</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>)</code><p class="ref-tip-brief">Return the Hamiltonian H of an SLH object.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.jump_operator"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">jump_operator</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>)</code><p class="ref-tip-brief">Return the jump-operator vector L of an SLH object.</p></div><div class="ref-tip" data-for="../../api/#SecondQuantizedAlgebra.to_numeric"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">to_numeric</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>, b<span class="julia-operator">::</span>QuantumOpticsBase<span class="julia-operator">.</span><span class="julia-type">Basis</span>; kwargs<span class="julia-operator">...</span>)</code><p class="ref-tip-brief">Translate the Hamiltonian and Lindblad operators of an SLH object G into numeric QuantumOptics.jl operators on the basis b.</p></div></div></body></html>
+</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../06-1_interaction-picture__PRA2023_107-013706_fig2/">« Interaction picture</a><a class="docs-footer-nextpage" href="../07-2_hong-ou-mandel__quantum-pulse/">Hong-Ou-Mandel interference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 14 September 2026 14:12">Monday 14 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div><div class="ref-tips" hidden><div class="ref-tip" data-for="../../api/#QuantumInputOutput.SLH"><code class="ref-tip-sig nohighlight"><span class="julia-type">SLH</span>{<span class="julia-type">N</span>, <span class="julia-type">ST</span>, <span class="julia-type">LT</span>, <span class="julia-type">HT</span>}</code><p class="ref-tip-brief">SLH triple with scattering matrix S, jump-operator vector L, and Hamiltonian H.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.coupling_input@arity-2"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">coupling_input</span>(u, T)</code><p class="ref-tip-brief">Compute the virtual-cavity input coupling from an input mode u(t) sampled on time grid T.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.coupling_output@arity-2"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">coupling_output</span>(v, T)</code><p class="ref-tip-brief">Compute the virtual-cavity output coupling from an output mode v(t) sampled on time grid T.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.hamiltonian"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">hamiltonian</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>)</code><p class="ref-tip-brief">Return the Hamiltonian H of an SLH object.</p></div><div class="ref-tip" data-for="../../api/#QuantumInputOutput.jump_operator"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">jump_operator</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>)</code><p class="ref-tip-brief">Return the jump-operator vector L of an SLH object.</p></div><div class="ref-tip" data-for="../../api/#SecondQuantizedAlgebra.to_numeric"><code class="ref-tip-sig nohighlight"><span class="julia-funcall">to_numeric</span>(G<span class="julia-operator">::</span><span class="julia-type">SLH</span>, b<span class="julia-operator">::</span>QuantumOpticsBase<span class="julia-operator">.</span><span class="julia-type">Basis</span>; kwargs<span class="julia-operator">...</span>)</code><p class="ref-tip-brief">Translate the Hamiltonian and Lindblad operators of an SLH object G into numeric QuantumOptics.jl operators on the basis b.</p></div></div></body></html>
