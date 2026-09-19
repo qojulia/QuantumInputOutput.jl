@@ -44,11 +44,24 @@ export SLH,
     solve_mode_evolution,
     solve_mode_evolution_symmetric,
     # Correlations
-    correlation_matrix
+    correlation_matrix,
+    # Stationary frequency-domain response
+    AbstractResponseSolver,
+    DenseHessenberg,
+    FrequencyResponse,
+    ScatteringResponse,
+    frequency_response,
+    output_field,
+    susceptibility,
+    scattering_response,
+    scattering_parameter,
+    emission_spectrum,
+    quadrature_spectrum
 
 include("SLH.jl")
 include("pulses.jl")
 include("correlations.jl")
 include("interaction_picture.jl")
+include("response.jl")
 
 end
