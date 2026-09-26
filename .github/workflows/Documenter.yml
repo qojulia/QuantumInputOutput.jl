@@ -37,20 +37,22 @@ permissions:
   id-token: write
   statuses: write
   pull-requests: read  # Required when using `push_preview=true`
-        
+
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
-env:
-  JULIA_NUM_THREADS: auto
-
 jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    env:
+      DOCUMENTER_LITERATE_WORKERS: 4
+      JULIA_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
@@ -60,9 +62,8 @@ jobs:
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-docdeploy@v1
         env:
-          JULIA_NUM_THREADS: auto
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # For authentication with GitHub Actions token
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }} # For authentication with SSH deploy key
-          JULIA_DEBUG: "Documenter"
+          JULIA_DEBUG: "Documenter,Literate"
           DATADEPS_ALWAYS_ACCEPT: true
-          GKSwstype: "100" # for Plots.jl plots (if you have them)
+          GKSwstype: "100" # headless GR backend for Plots.jl
