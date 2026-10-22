@@ -125,4 +125,4 @@ using InteractiveUtils
 versioninfo()
 
 using Pkg
-Pkg.status(["QuantumInputOutput", "QuantumOptics", "Plots"], mode = PKGMODE_MANIFEST)
+Pkg.status(["QuantumInputOutput", "QuantumOptics", "Plots"])
