@@ -171,14 +171,11 @@ using InteractiveUtils
 versioninfo()
 
 using Pkg
-Pkg.status(
-    [
-        "QuantumInputOutput",
-        "QuantumOptics",
-        "SecondQuantizedAlgebra",
-        "SymbolicUtils",
-        "Plots",
-        "LaTeXStrings",
-    ],
-    mode = PKGMODE_MANIFEST,
-)
+Pkg.status([
+    "QuantumInputOutput",
+    "QuantumOptics",
+    "SecondQuantizedAlgebra",
+    "SymbolicUtils",
+    "Plots",
+    "LaTeXStrings",
+])

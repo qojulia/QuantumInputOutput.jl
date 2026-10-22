@@ -243,13 +243,10 @@ using InteractiveUtils
 versioninfo()
 
 using Pkg
-Pkg.status(
-    [
-        "QuantumInputOutput",
-        "SecondQuantizedAlgebra",
-        "QuantumOptics",
-        "Plots",
-        "DataInterpolations",
-    ],
-    mode = PKGMODE_MANIFEST,
-)
+Pkg.status([
+    "QuantumInputOutput",
+    "SecondQuantizedAlgebra",
+    "QuantumOptics",
+    "Plots",
+    "DataInterpolations",
+])

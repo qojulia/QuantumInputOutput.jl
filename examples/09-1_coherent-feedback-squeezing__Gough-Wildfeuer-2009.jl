@@ -71,7 +71,4 @@ using InteractiveUtils
 versioninfo()
 
 using Pkg
-Pkg.status(
-    ["QuantumInputOutput", "SecondQuantizedAlgebra", "Plots"],
-    mode = PKGMODE_MANIFEST,
-)
+Pkg.status(["QuantumInputOutput", "SecondQuantizedAlgebra", "Plots"])
