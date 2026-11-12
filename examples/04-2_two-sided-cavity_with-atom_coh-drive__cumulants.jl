@@ -208,7 +208,7 @@ bc1 = FockBasis(4)
 ba = NLevelBasis(2)
 b = bc1 ⊗ tensor([ba for i = 1:Natoms]...)
 ψ0 = LazyKet(b, (fockstate(bc1, 0), [nlevelstate(ba, 1) for i = 1:Natoms]...))
-u0_2 = initial_values(eqs2_c, initial_values(eqs2_c, ψ0)) # state -> vector -> u0 dict
+u0_2 = initial_values(eqs2_c, ψ0) # state -> u0 dict
 nothing # hide
 
 #
